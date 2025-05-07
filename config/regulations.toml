@@ -1,0 +1,19 @@
+# config/regulations.toml
+
+[states]
+MT = "Montana_Hunting_Regulations.pdf"
+
+[prompt]
+template = """
+You are an expert guide to Montana game laws.  Given the full text of Montana’s hunting regulations, produce a concise summary of:
+  • Season dates and bag limits
+  • Required licenses, stamps, and methods of take
+  • Any special restrictions (e.g. antler‐point restrictions, draw hunts)
+Return the answer as JSON:
+{
+  "seasons": { ... },
+  "limits": { ... },
+  "licenses": [ ... ],
+  "notes": [ ... ]
+}
+"""
