@@ -41,7 +41,7 @@ class AssistantManager:
         """
         Creates a new vector store for your regulations files.
         """
-        vs = self.client.beta.vector_stores.create(name=name)
+        vs = self.client.vector_stores.create(name=name)
         self.vector_store = vs
         return vs
     
@@ -57,7 +57,7 @@ class AssistantManager:
         # 2. Ensure we have a vector store
         vs = self.vector_store or self.create_vector_store()
         # 3. Ingest the file into that store (this polls until done)
-        ingest = self.client.beta.vector_stores.files.create_and_poll(
+        ingest = self.client.vector_stores.files.create_and_poll(
             vector_store_id=vs.id,
             file_id=file.id
         )
