@@ -1,19 +1,24 @@
-# config/regulations.toml
+# hunting_regs.toml
 
-[states]
-MT = "Montana_Hunting_Regulations.pdf"
+[paths]
+# where your input PDFs live
+input_dir = "data/input"
+# where your summaries will be written
+output_dir = "data/output"
+
+[pdf]
+# list your regulation‐PDF filenames here
+files = ["2024-dea-regulations-final-for-web-with-web-quality-maps.pdf"]
+
+[openai]
+# which model to use
+model_name = "gpt-4o"
+# name of the env var holding your API key
+api_key_env = "OPENAI_API_KEY"
 
 [prompt]
-template = """
-You are an expert guide to Montana game laws.  Given the full text of Montana’s hunting regulations, produce a concise summary of:
-  • Season dates and bag limits
-  • Required licenses, stamps, and methods of take
-  • Any special restrictions (e.g. antler‐point restrictions, draw hunts)
-Return the answer as JSON:
-{
-  "seasons": { ... },
-  "limits": { ... },
-  "licenses": [ ... ],
-  "notes": [ ... ]
-}
+# the template that will go along with the PDF
+summary_template = """
+Please read this PDF of Montana’s 2024 deer, elk, and antelope regulations and
+give me a concise, well-organized summary of the key points.
 """
