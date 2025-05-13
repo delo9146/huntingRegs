@@ -1,3 +1,4 @@
+# assistantManager.py
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -5,10 +6,6 @@ from configManager import ConfigManager
 
 class AssistantManager:
     def __init__(self, config: ConfigManager):
-        """
-        Initializes the OpenAI client and holds placeholders
-        for the Assistant and Vector Store.
-        """
         load_dotenv()
         api_key = os.getenv(config.api_key_env)
         if not api_key:
@@ -18,12 +15,16 @@ class AssistantManager:
         self.assistant = None
         self.vector_store = None
 
+    def get_or_create_assistant(self, name: str = "RegulationsSummarizer"):
+        # 1) list existing assistants
+        for a in self.client.beta.assistants.list().data:
+            if a.name == name:
+                self.assistant = a
+                return a
+        # 2) create if not found
+        return self.create_assistant(name)
 
     def create_assistant(self, name: str = "RegulationsSummarizer"):
-        """
-        Create a new Assistant (or overwrite) configured with the File Search tool.
-        """
-        # 1. Define the assistant
         assistant = self.client.beta.assistants.create(
             name=name,
             instructions=(
@@ -33,40 +34,63 @@ class AssistantManager:
             model=self.config.model_name,
             tools=[{"type": "file_search"}],
         )
-        # 2. Keep a reference
         self.assistant = assistant
         return assistant
-    
+
+    def get_or_create_vector_store(self, name: str = "regs-store"):
+        # 1) list existing vector stores
+        for vs in self.client.vector_stores.list().data:
+            if vs.name == name:
+                self.vector_store = vs
+                return vs
+        # 2) create if not found
+        return self.create_vector_store(name)
+
     def create_vector_store(self, name: str = "regs-store"):
-        """
-        Creates a new vector store for your regulations files.
-        """
         vs = self.client.vector_stores.create(name=name)
         self.vector_store = vs
         return vs
-    
+
+    def _find_uploaded_file(self, filename: str):
+        # look for a file with same name & purpose="assistants"
+        for f in self.client.files.list().data:
+            if getattr(f, "filename", "") == filename and f.purpose == "assistants":
+                return f
+        return None
+
+    def _file_already_ingested(self, file_id: str):
+        ingested = self.client.vector_stores.files.list(
+            vector_store_id=self.vector_store.id
+        ).data
+        # VectorStoreFile.id is the ID of the uploaded File
+        return any(item.id == file_id for item in ingested)
+
+
     def ingest_file(self, pdf_path: str):
-        """
-        Uploads the PDF at pdf_path and ingests it into the vector store.
-        """
-        # 1. Upload the file for assistant use
-        file = self.client.files.create(
-            file=open(pdf_path, "rb"),
-            purpose="assistants"
-        )
-        # 2. Ensure we have a vector store
-        vs = self.vector_store or self.create_vector_store()
-        # 3. Ingest the file into that store (this polls until done)
-        ingest = self.client.vector_stores.files.create_and_poll(
-            vector_store_id=vs.id,
-            file_id=file.id
-        )
-        return ingest
+        filename = os.path.basename(pdf_path)
+        # 1) upload only once
+        existing = self._find_uploaded_file(filename)
+        if existing:
+            file_id = existing.id
+        else:
+            up = self.client.files.create(
+                file=open(pdf_path, "rb"),
+                purpose="assistants"
+            )
+            file_id = up.id
+
+        # 2) ensure VS exists
+        vs = self.vector_store or self.get_or_create_vector_store()
+
+        # 3) ingest only once
+        if not self._file_already_ingested(file_id):
+            return self.client.vector_stores.files.create_and_poll(
+                vector_store_id=vs.id,
+                file_id=file_id
+            )
+        return None  # already ingested
 
     def update_assistant(self):
-        """
-        Points your Assistant’s File Search tool at the created vector store.
-        """
         if not self.assistant or not self.vector_store:
             raise ValueError("Assistant or vector store not initialized.")
         self.client.beta.assistants.update(
@@ -75,4 +99,3 @@ class AssistantManager:
                 "file_search": {"vector_store_ids": [self.vector_store.id]}
             }
         )
-

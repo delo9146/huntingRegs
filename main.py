@@ -11,8 +11,8 @@ def main():
     # Prepare the Assistant
     am = AssistantManager(cfg)
 
-    assistant = am.create_assistant()
-    vs = am.create_vector_store()
+    assistant = am.get_or_create_assistant()
+    vs = am.get_or_create_vector_store()
 
 
     # Upload & ingest each regulations PDF
