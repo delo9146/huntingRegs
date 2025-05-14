@@ -4,18 +4,10 @@
 input_dir = "data/input"
 output_dir = "data/output"
 
-[pdf]
-files = ["2024-dea-regulations-final-for-web-with-web-quality-maps.pdf"]
-
 [openai]
 model_name = "gpt-4o"
 api_key_env = "OPENAI_API_KEY"
 
-[prompt]
-summary_template = """
-Please read this PDF of Montana’s 2024 deer, elk, and antelope regulations and
-give me a concise, well-organized summary of the key points.
-"""
 [assistant]
 name = "RegulationsSummarizer"
 vector_store_name = "regs-store"
