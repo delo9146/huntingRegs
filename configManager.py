@@ -9,7 +9,6 @@ class ConfigManager:
             raise FileNotFoundError(f"Config file not found: {self.config_path}")
         self._config = toml.load(self.config_path)
 
-    # ← Insert your new property methods here, at this indentation level
     @property
     def input_dir(self):
         return self._config["paths"]["input_dir"]
@@ -33,3 +32,11 @@ class ConfigManager:
     @property
     def summary_template(self):
         return self._config["prompt"]["summary_template"]
+
+    @property
+    def assistant_name(self) -> str:
+        return self._config["assistant"]["name"]
+
+    @property
+    def vector_store_name(self) -> str:
+        return self._config["assistant"]["vector_store_name"]

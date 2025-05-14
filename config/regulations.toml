@@ -1,24 +1,21 @@
 # hunting_regs.toml
 
 [paths]
-# where your input PDFs live
 input_dir = "data/input"
-# where your summaries will be written
 output_dir = "data/output"
 
 [pdf]
-# list your regulation‐PDF filenames here
 files = ["2024-dea-regulations-final-for-web-with-web-quality-maps.pdf"]
 
 [openai]
-# which model to use
 model_name = "gpt-4o"
-# name of the env var holding your API key
 api_key_env = "OPENAI_API_KEY"
 
 [prompt]
-# the template that will go along with the PDF
 summary_template = """
 Please read this PDF of Montana’s 2024 deer, elk, and antelope regulations and
 give me a concise, well-organized summary of the key points.
 """
+[assistant]
+name = "RegulationsSummarizer"
+vector_store_name = "regs-store"
