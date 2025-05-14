@@ -16,12 +16,10 @@ class AssistantManager:
         self.vector_store = None
 
     def get_or_create_assistant(self, name: str = "RegulationsSummarizer"):
-        # 1) list existing assistants
         for a in self.client.beta.assistants.list().data:
             if a.name == name:
                 self.assistant = a
                 return a
-        # 2) create if not found
         return self.create_assistant(name)
 
     def create_assistant(self, name: str = "RegulationsSummarizer"):
@@ -38,12 +36,10 @@ class AssistantManager:
         return assistant
 
     def get_or_create_vector_store(self, name: str = "regs-store"):
-        # 1) list existing vector stores
         for vs in self.client.vector_stores.list().data:
             if vs.name == name:
                 self.vector_store = vs
                 return vs
-        # 2) create if not found
         return self.create_vector_store(name)
 
     def create_vector_store(self, name: str = "regs-store"):
@@ -52,7 +48,6 @@ class AssistantManager:
         return vs
 
     def _find_uploaded_file(self, filename: str):
-        # look for a file with same name & purpose="assistants"
         for f in self.client.files.list().data:
             if getattr(f, "filename", "") == filename and f.purpose == "assistants":
                 return f
@@ -62,13 +57,11 @@ class AssistantManager:
         ingested = self.client.vector_stores.files.list(
             vector_store_id=self.vector_store.id
         ).data
-        # VectorStoreFile.id is the ID of the uploaded File
         return any(item.id == file_id for item in ingested)
 
 
     def ingest_file(self, pdf_path: str):
         filename = os.path.basename(pdf_path)
-        # 1) upload only once
         existing = self._find_uploaded_file(filename)
         if existing:
             file_id = existing.id
@@ -79,16 +72,14 @@ class AssistantManager:
             )
             file_id = up.id
 
-        # 2) ensure VS exists
         vs = self.vector_store or self.get_or_create_vector_store()
 
-        # 3) ingest only once
         if not self._file_already_ingested(file_id):
             return self.client.vector_stores.files.create_and_poll(
                 vector_store_id=vs.id,
                 file_id=file_id
             )
-        return None  # already ingested
+        return None  
 
     def update_assistant(self):
         if not self.assistant or not self.vector_store:

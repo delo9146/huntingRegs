@@ -4,18 +4,14 @@ from assistantManager import AssistantManager
 import time
 
 def main():
-    # Load configuration
     cfg = ConfigManager()
-    # Prepare file manager
     fm = FileManager(cfg.input_dir, cfg.output_dir)
-    # Prepare the Assistant
     am = AssistantManager(cfg)
 
     assistant = am.get_or_create_assistant()
     vs = am.get_or_create_vector_store()
 
 
-    # Upload & ingest each regulations PDF
     for fname in cfg.pdf_files:
         print(f"Ingesting {fname}…")
         pdf_path = fm.get_input_path(fname)
@@ -23,7 +19,6 @@ def main():
 
     am.update_assistant()
 
-    # Start a thread and ask for the summary
     print("Requesting summary from Assistant…")
     thread = am.client.beta.threads.create()
     am.client.beta.threads.messages.create(
@@ -36,7 +31,6 @@ def main():
         assistant_id=assistant.id
     )
 
-    # Poll until complete
     while run.status != "completed":
         time.sleep(1)
         run = am.client.beta.threads.runs.retrieve(
