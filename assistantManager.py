@@ -60,15 +60,17 @@ class AssistantManager:
         return any(item.id == file_id for item in ingested)
 
 
-    def ingest_file(self, pdf_path: str):
+    def ingest_file(self, pdf_path: str, state: str = None):
         filename = os.path.basename(pdf_path)
         existing = self._find_uploaded_file(filename)
         if existing:
             file_id = existing.id
         else:
+            metadata = {"state": state} if state else None
             up = self.client.files.create(
                 file=open(pdf_path, "rb"),
-                purpose="assistants"
+                purpose="assistants",
+                metadata=metadata
             )
             file_id = up.id
 

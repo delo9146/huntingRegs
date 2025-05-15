@@ -15,16 +15,28 @@ def run_ingest():
     assistant = am.get_or_create_assistant(cfg.assistant_name)
     print(f"Assistant ready (id={assistant.id})")
 
-    for fname in os.listdir(cfg.input_dir):
-        if not fname.lower().endswith(".pdf"):
-            continue
-
-        path = fm.get_input_path(fname)
-        print(f"Ingesting {fname}…")
-        am.ingest_file(path)
+    state_pdfs = get_all_state_pdfs(cfg.input_dir)
+    for state_folder, pdf_path in state_pdfs:
+        print(f"Ingesting {pdf_path} for state {state_folder}")
+        am.ingest_file(pdf_path, state=state_folder)
 
     am.update_assistant()
     print("Assistant updated with all ingested documents.")
+
+
+
+def get_all_state_pdfs(input_dir):
+    state_pdfs = []
+    for state_folder in os.listdir(input_dir):
+        state_path = os.path.join(input_dir, state_folder)
+        if not os.path.isdir(state_path):
+            continue
+        for fname in os.listdir(state_path):
+            if fname.lower().endswith(".pdf"):
+                pdf_path = os.path.join(state_path, fname)
+                state_pdfs.append((state_folder, pdf_path))
+    return state_pdfs
+
 
 if __name__ == "__main__":
     run_ingest()
