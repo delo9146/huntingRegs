@@ -75,17 +75,17 @@ class AssistantManager:
                 metadata = None
             up = self.client.files.create(
                 file=open(pdf_path, "rb"),
-                purpose="assistants",
-                metadata=metadata
+                purpose="assistants"
             )
             file_id = up.id
 
         vs = self.vector_store or self.get_or_create_vector_store()
 
         if not self._file_already_ingested(file_id):
-            return self.client.vector_stores.files.create_and_poll(
+            return self.client.vector_stores.files.create(
                 vector_store_id=vs.id,
-                file_id=file_id
+                file_id=file_id,
+                attributes=metadata
             )
         return None  
 
