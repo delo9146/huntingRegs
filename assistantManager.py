@@ -60,13 +60,19 @@ class AssistantManager:
         return any(item.id == file_id for item in ingested)
 
 
-    def ingest_file(self, pdf_path: str, state: str = None):
+    def ingest_file(self, pdf_path: str, state: str = None, species: list = None):
         filename = os.path.basename(pdf_path)
         existing = self._find_uploaded_file(filename)
         if existing:
             file_id = existing.id
         else:
-            metadata = {"state": state} if state else None
+            metadata = {}
+            if state:
+                metadata["state"] = state
+            if species:
+                metadata["species"] = ",".join(species)  # Store as comma-separated string for OpenAI
+            if not metadata:
+                metadata = None
             up = self.client.files.create(
                 file=open(pdf_path, "rb"),
                 purpose="assistants",

@@ -11,3 +11,20 @@ api_key_env = "OPENAI_API_KEY"
 [assistant]
 name = "RegulationsSummarizer"
 vector_store_name = "regs-store"
+
+[species]
+valid = [
+  "deer",
+  "elk",
+  "antelope",
+  "black-bear",
+  "moose",
+  "sheep",
+  "goat",
+  "bison",
+  "mountain-lion",
+  "wolf",
+  "turkey",
+  "goose",
+  "migratory-bird"
+]
