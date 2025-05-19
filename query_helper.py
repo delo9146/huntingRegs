@@ -42,7 +42,14 @@ def run_query_return(state: str, prompt: str) -> str:
         if m.role == "assistant":
             # Message content may be a list of blocks; join if so
             if isinstance(m.content, list):
-                return "\n\n".join(getattr(block, "text", str(block)) for block in m.content)
+                blocks = []
+                for block in m.content:
+                    text_val = getattr(block, "text", None)
+                    if text_val is not None:
+                        blocks.append(text_val)
+                    else:
+                        blocks.append(str(block))
+                return "\n\n".join(str(b) for b in blocks)
             else:
                 return str(m.content)
     return "No answer returned."
