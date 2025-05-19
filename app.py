@@ -2,12 +2,10 @@ import streamlit as st
 from configManager import ConfigManager
 from query_helper import run_query_return  # from Step 1
 
-# --- Load config ---
 cfg = ConfigManager()
-available_states = []  # Will fill from vector store files or config
+available_states = [] 
 available_species = cfg.valid_species
 
-# For demo, let’s scan the input_dir for state folders
 import os
 input_dir = cfg.input_dir
 if os.path.exists(input_dir):
@@ -16,12 +14,11 @@ if os.path.exists(input_dir):
         if os.path.isdir(os.path.join(input_dir, d))
     ]
 else:
-    available_states = ["MT", "CO"]  # fallback
+    available_states = ["MT", "CO"] 
 
 st.title("Hunting Regulations AI Demo")
 st.write("Select a state and species to see a summary of hunting regulations. Then, ask specific questions.")
 
-# --- UI Components ---
 state = st.selectbox("Select state", available_states)
 species = st.selectbox("Select species", available_species)
 
@@ -30,7 +27,6 @@ if "last_state" not in st.session_state:
 if "last_species" not in st.session_state:
     st.session_state.last_species = None
 
-# --- Auto summary on state/species change ---
 auto_summary = ""
 if state and species:
     if (
@@ -53,7 +49,6 @@ if auto_summary:
     st.subheader(f"Summary for {state} - {species}")
     st.markdown(auto_summary)
 
-# --- User prompt for detailed questions ---
 st.divider()
 st.markdown("**Ask a specific question about the regulations:**")
 user_prompt = st.text_area("Question", key="prompt")
