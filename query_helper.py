@@ -39,12 +39,16 @@ def run_query_return(state: str, prompt: str) -> str:
             if isinstance(m.content, list):
                 blocks = []
                 for block in m.content:
-                    text_val = getattr(block, "text", None)
-                    if text_val is not None:
-                        blocks.append(text_val)
+                    value_val = None
+                    if hasattr(block, "value"):
+                        value_val = block.value
+                    elif hasattr(block, "text") and hasattr(block.text, "value"):
+                        value_val = block.text.value
                     else:
-                        blocks.append(str(block))
+                        value_val = str(block)
+                    blocks.append(value_val)
                 return "\n\n".join(str(b) for b in blocks)
             else:
                 return str(m.content)
     return "No answer returned."
+
