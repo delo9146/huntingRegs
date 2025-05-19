@@ -51,11 +51,33 @@ if auto_summary:
 
 st.divider()
 st.markdown("**Ask a specific question about the regulations:**")
-user_prompt = st.text_area("Question", key="prompt")
-ask_btn = st.button("Ask")
+
+# --- Initialize chat history ---
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+if "prompt" not in st.session_state:
+    st.session_state.prompt = ""
+
+user_prompt = st.text_area("Question", key="prompt", value=st.session_state.prompt, placeholder="Type your regulation question here...")
+
+ask_btn = st.button("Ask", key="ask_button")
 
 if ask_btn and user_prompt and state:
     with st.spinner("Getting answer..."):
         answer = run_query_return(state, user_prompt)
-        st.markdown("### Assistant Response")
-        st.markdown(answer)
+        # Save the Q&A to chat history
+        st.session_state.chat_history.append((user_prompt, answer))
+
+# Optional: Reset Button to Clear Chat
+if st.button("Clear Conversation"):
+    st.session_state.chat_history = []
+
+# Display Chat History (all Q&A)
+if st.session_state.chat_history:
+    st.markdown("## Conversation History")
+    for i, (q, a) in enumerate(st.session_state.chat_history, 1):
+        st.markdown(f"**Q{i}:** {q}")
+        st.markdown(f"**A{i}:** {a}")
+        st.divider()
+
+
