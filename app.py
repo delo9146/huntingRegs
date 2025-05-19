@@ -27,27 +27,31 @@ if "last_state" not in st.session_state:
 if "last_species" not in st.session_state:
     st.session_state.last_species = None
 
-auto_summary = ""
-if state and species:
-    if (
-        st.session_state.last_state != state
-        or st.session_state.last_species != species
-    ):
-        with st.spinner(f"Summarizing regulations for {state} - {species}..."):
-            summary_prompt = (
-                f"Summarize the hunting regulations for {state} for {species}. "
-                "Include seasons, tag types, quotas, regions/units, weapon restrictions, and unique rules."
-            )
-            auto_summary = run_query_return(state, summary_prompt)
-            st.session_state.auto_summary = auto_summary
+# --- Generate Summary Only When User Clicks ---
+if "auto_summary" not in st.session_state:
+    st.session_state.auto_summary = ""
+if "last_state" not in st.session_state:
+    st.session_state.last_state = None
+if "last_species" not in st.session_state:
+    st.session_state.last_species = None
+
+summary_btn = st.button("Generate Summary", key="summary_button")
+
+if summary_btn and state and species:
+    with st.spinner(f"Summarizing regulations for {state} - {species}..."):
+        summary_prompt = (
+            f"Summarize the hunting regulations for {state} for {species}. "
+            "Include seasons, tag types, quotas, regions/units, weapon restrictions, and unique rules."
+        )
+        st.session_state.auto_summary = run_query_return(state, summary_prompt)
         st.session_state.last_state = state
         st.session_state.last_species = species
-    else:
-        auto_summary = st.session_state.get("auto_summary", "")
 
-if auto_summary:
+# Display summary if generated
+if st.session_state.auto_summary:
     st.subheader(f"Summary for {state} - {species}")
-    st.markdown(auto_summary)
+    st.markdown(st.session_state.auto_summary)
+
 
 st.divider()
 st.markdown("**Ask a specific question about the regulations:**")
