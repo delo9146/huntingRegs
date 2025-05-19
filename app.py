@@ -1,6 +1,6 @@
 import streamlit as st
 from configManager import ConfigManager
-from query_helper import run_query_return  # from Step 1
+from query_helper import run_query_return 
 
 cfg = ConfigManager()
 available_states = [] 
@@ -27,7 +27,6 @@ if "last_state" not in st.session_state:
 if "last_species" not in st.session_state:
     st.session_state.last_species = None
 
-# --- Generate Summary Only When User Clicks ---
 if "auto_summary" not in st.session_state:
     st.session_state.auto_summary = ""
 if "last_state" not in st.session_state:
@@ -60,7 +59,6 @@ if summary_btn and state and species:
         st.session_state.last_state = state
         st.session_state.last_species = species
 
-# Display summary if generated
 if st.session_state.auto_summary:
     st.subheader(f"Summary for {state} - {species}")
     st.markdown(st.session_state.auto_summary)
@@ -69,7 +67,6 @@ if st.session_state.auto_summary:
 st.divider()
 st.markdown("**Ask a specific question about the regulations:**")
 
-# --- Initialize chat history ---
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 if "prompt" not in st.session_state:
@@ -82,14 +79,11 @@ ask_btn = st.button("Ask", key="ask_button")
 if ask_btn and user_prompt and state:
     with st.spinner("Getting answer..."):
         answer = run_query_return(state, user_prompt)
-        # Save the Q&A to chat history
         st.session_state.chat_history.append((user_prompt, answer))
 
-# Optional: Reset Button to Clear Chat
 if st.button("Clear Conversation"):
     st.session_state.chat_history = []
 
-# Display Chat History (all Q&A)
 if st.session_state.chat_history:
     st.markdown("## Conversation History")
     for i, (q, a) in enumerate(st.session_state.chat_history, 1):
