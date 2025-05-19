@@ -40,9 +40,22 @@ summary_btn = st.button("Generate Summary", key="summary_button")
 if summary_btn and state and species:
     with st.spinner(f"Summarizing regulations for {state} - {species}..."):
         summary_prompt = (
-            f"Summarize the hunting regulations for {state} for {species}. "
-            "Include seasons, tag types, quotas, regions/units, weapon restrictions, and unique rules."
+            f"You are an expert at summarizing complex hunting regulations for users who are planning a hunt. "
+            f"Provide a clear, concise, and detailed summary of the {state} hunting regulations for {species}, including the following sections: \n"
+            "- Season dates and types (archery, general, muzzleloader, etc.)\n"
+            "- Tag and license types available (resident/nonresident, quotas, preference/draw info)\n"
+            "- Application deadlines and how to apply\n"
+            "- Units, regions, or districts where hunting is permitted, including any notable closures or access restrictions\n"
+            "- Bag limits and restrictions (sex/age, antler point, etc.)\n"
+            "- Legal weapons and equipment for each season\n"
+            "- Hunter orange/safety requirements\n"
+            "- Special opportunities (SuperTags, youth/senior hunts, landowner tags, auctions)\n"
+            "- Mandatory reporting or check-in requirements\n"
+            "- Any significant rule changes, penalties, or special notes for this year\n\n"
+            "Format the summary with headers and bullet points. Use clear, direct language. "
+            "Include citations to the original document where appropriate."
         )
+
         st.session_state.auto_summary = run_query_return(state, summary_prompt)
         st.session_state.last_state = state
         st.session_state.last_species = species
