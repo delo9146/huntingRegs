@@ -1,12 +1,34 @@
 import streamlit as st
+import re
+import os
 from configManager import ConfigManager
 from query_helper import run_query_return 
+from citation_helper import get_chunk_text_by_citation
+
+def render_with_clickable_citations(text, key_prefix=""):
+    """
+    Render markdown text with citations like [5:3†source] as clickable buttons.
+    """
+    text = text.replace("【", "[").replace("】", "]")
+    citation_pattern = r'(\[\d+:\d+†[^\]]+\])'
+    parts = re.split(citation_pattern, text)
+    for i, part in enumerate(parts):
+        match = re.match(r'\[(\d+:\d+†[^\]]+)\]', part)
+        if match:
+            citation = match.group(1)
+            # Show as a button
+            if st.button(f"See Source: {citation}", key=f"{key_prefix}_{citation}_{i}"):
+                st.session_state['selected_citation'] = citation.strip("[]")
+
+        else:
+            # Still render regular text
+            st.markdown(part, unsafe_allow_html=True)
+
 
 cfg = ConfigManager()
 available_states = [] 
 available_species = cfg.valid_species
 
-import os
 input_dir = cfg.input_dir
 if os.path.exists(input_dir):
     available_states = [
@@ -21,6 +43,8 @@ st.write("Select a state and species to see a summary of hunting regulations. Th
 
 state = st.selectbox("Select state", available_states)
 species = st.selectbox("Select species", available_species)
+
+left_col, right_col = st.columns([2, 1])
 
 if "last_state" not in st.session_state:
     st.session_state.last_state = None
@@ -59,10 +83,10 @@ if summary_btn and state and species:
         st.session_state.last_state = state
         st.session_state.last_species = species
 
-if st.session_state.auto_summary:
-    st.subheader(f"Summary for {state} - {species}")
-    st.markdown(st.session_state.auto_summary)
-
+with left_col:
+    if st.session_state.auto_summary:
+        st.subheader(f"Summary for {state} - {species}")
+        render_with_clickable_citations(st.session_state.auto_summary, key_prefix="summary")
 
 st.divider()
 st.markdown("**Ask a specific question about the regulations:**")
@@ -84,11 +108,24 @@ if ask_btn and user_prompt and state:
 if st.button("Clear Conversation"):
     st.session_state.chat_history = []
 
-if st.session_state.chat_history:
-    st.markdown("## Conversation History")
-    for i, (q, a) in enumerate(st.session_state.chat_history, 1):
-        st.markdown(f"**Q{i}:** {q}")
-        st.markdown(f"**A{i}:** {a}")
-        st.divider()
+with left_col:
+    # ... summary above ...
+    if st.session_state.chat_history:
+        st.markdown("## Conversation History")
+        for i, (q, a) in enumerate(st.session_state.chat_history, 1):
+            st.markdown(f"**Q{i}:** {q}")
+            render_with_clickable_citations(a, key_prefix=f"chat_{i}")
+            st.divider()
+
+with right_col:
+    st.subheader("Citation Source")
+    selected_citation = st.session_state.get('selected_citation')
+    if selected_citation:
+        chunk_text = get_chunk_text_by_citation(selected_citation)
+        st.markdown(f"**Citation ID:** `{selected_citation}`")
+        st.markdown(chunk_text)
+    else:
+        st.write("Click a citation to view its source context here.")
+
 
 
