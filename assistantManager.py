@@ -92,9 +92,11 @@ class AssistantManager:
     def update_assistant(self):
         if not self.assistant or not self.vector_store:
             raise ValueError("Assistant or vector store not initialized.")
+        print("Updating assistant with vector store:", self.vector_store.id)
         self.client.beta.assistants.update(
             self.assistant.id,
             tool_resources={
                 "file_search": {"vector_store_ids": [self.vector_store.id]}
             }
         )
+        print("Assistant updated successfully.")

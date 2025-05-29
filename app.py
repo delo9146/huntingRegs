@@ -95,6 +95,7 @@ if summary_btn and state and species:
         st.session_state.auto_summary_annotations = summary_result["annotations"]
         st.session_state.last_state = state
         st.session_state.last_species = species
+        print("Annotations from summary:", summary_result["annotations"])
 
 with left_col:
     if st.session_state.auto_summary:
