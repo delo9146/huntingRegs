@@ -2,7 +2,8 @@ from configManager import ConfigManager
 from assistantManager import AssistantManager
 import time
 
-def run_query_return(state: str, prompt: str) -> str:
+def run_query_return(state: str, prompt: str):
+    from openai import OpenAI
     cfg = ConfigManager()
     am  = AssistantManager(cfg)
 
@@ -35,20 +36,20 @@ def run_query_return(state: str, prompt: str) -> str:
 
     messages = am.client.beta.threads.messages.list(thread_id=thread.id).data
     for m in reversed(messages):
-        if m.role == "assistant":
-            if isinstance(m.content, list):
-                blocks = []
-                for block in m.content:
-                    value_val = None
-                    if hasattr(block, "value"):
-                        value_val = block.value
-                    elif hasattr(block, "text") and hasattr(block.text, "value"):
-                        value_val = block.text.value
-                    else:
-                        value_val = str(block)
-                    blocks.append(value_val)
-                return "\n\n".join(str(b) for b in blocks)
-            else:
-                return str(m.content)
-    return "No answer returned."
+        if m.role == "assistant" and isinstance(m.content, list) and hasattr(m.content[0], "text"):
+            content_obj = m.content[0]
+            text = getattr(content_obj.text, "value", str(content_obj.text))
+            annotations = getattr(content_obj, "annotations", [])
+            for annotation in annotations:
+                if hasattr(annotation, "text") and hasattr(annotation, "file_citation"):
+                    placeholder = annotation.text  # e.g., ":contentReference[oaicite:1]{index=1}"
+                    fc = annotation.file_citation
+                    citation_id = f"[{annotation.start_index}:{annotation.end_index}†{fc.file_id}]"
+                    text = text.replace(placeholder, citation_id)
+            return {"text": text, "annotations": annotations}
+        elif m.role == "assistant":
+            return {"text": str(m.content), "annotations": []}
+    return {"text": "No answer returned.", "annotations": []}
+
+
 
