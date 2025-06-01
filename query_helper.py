@@ -1,5 +1,6 @@
 from configManager import ConfigManager
 from assistantManager import AssistantManager
+import re
 import time
 
 def run_query_return(state: str, prompt: str):
@@ -40,25 +41,22 @@ def run_query_return(state: str, prompt: str):
         print("Raw content:", m.content)
         if m.role == "assistant" and isinstance(m.content, list) and hasattr(m.content[0], "text"):
             content_obj = m.content[0]
-            text = getattr(content_obj.text, "value", str(content_obj.text))
-            annotations = getattr(content_obj, "annotations", [])
+            text = content_obj.text.value
+            annotations = getattr(content_obj.text, "annotations", [])
             for annotation in annotations:
                 if hasattr(annotation, "text") and hasattr(annotation, "file_citation"):
-                    placeholder = annotation.text
+                    raw_text = annotation.text  # e.g. '【5:0†source】'
                     fc = annotation.file_citation
-
-                    # Defensive check: if the file ID starts with "file-", it’s valid
-                    if hasattr(fc, "file_id") and fc.file_id.startswith("file-"):
-                        citation_id = f"[{annotation.start_index}:{annotation.end_index}†{fc.file_id}]"
+                    # extract numbers inside raw_text
+                    m2 = re.match(r"【(\d+):(\d+)†source】", raw_text)
+                    if m2:
+                        msg_idx, chunk_idx = m2.groups()
+                        citation_id = f"[{msg_idx}:{chunk_idx}†{fc.file_id}]"
                     else:
-                        # Fall back to placeholder with warning
-                        citation_id = f"[{annotation.start_index}:{annotation.end_index}†invalid-file-id]"
-                    text = text.replace(placeholder, citation_id)
-
+                        # fallback using file_id with chunk 0
+                        citation_id = f"[0:0†{fc.file_id}]"
+                    text = text.replace(raw_text, citation_id)
             return {"text": text, "annotations": annotations}
         elif m.role == "assistant":
             return {"text": str(m.content), "annotations": []}
     return {"text": "No answer returned.", "annotations": []}
-
-
-

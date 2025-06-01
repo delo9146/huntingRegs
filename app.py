@@ -16,7 +16,6 @@ def render_with_clickable_citations(text, annotations, key_prefix=""):
 
     char_index = 0
     for i, part in enumerate(parts):
-        # See if part is a citation marker
         match = re.match(r'\[(\d+:\d+†[^\]]+)\]', part)
         if match:
             citation = match.group(0)
