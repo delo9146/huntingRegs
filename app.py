@@ -41,25 +41,21 @@ if summary_btn and state and species:
     with st.spinner(f"Summarizing regulations for {state} - {species}..."):
         summary_prompt = (
             f"You are an expert at summarizing complex hunting regulations for users who are planning a hunt. "
-            f"Provide a clear, concise, and detailed summary of the {state} hunting regulations for {species}, including the following sections: \n"
+            f"Provide a clear, concise, and extremely detailed summary of the {state} hunting regulations for {species}, including the following sections: \n"
             "- Season dates and types (archery, general, muzzleloader, etc.)\n"
             "- Tag and license types available (resident/nonresident, quotas, preference/draw info)\n"
             "- Application deadlines and how to apply\n"
             "- Units, regions, or districts where hunting is permitted, including any notable closures or access restrictions\n"
             "- Bag limits and restrictions (sex/age, antler point, etc.)\n"
             "- Legal weapons and equipment for each season\n"
-            "- Hunter orange/safety requirements\n"
+            "- Hunter orange/safety requirements. Specifically, if mentioned, how much orange.\n"
             "- Special opportunities (SuperTags, youth/senior hunts, landowner tags, auctions)\n"
             "- Mandatory reporting or check-in requirements\n"
             "- Any significant rule changes, penalties, or special notes for this year\n\n"
             "Format the summary with headers and bullet points. Use clear, direct language. "
-            "Use direct quotes or close paraphrasing so that citations are automatically attached."
-            "Do not use human-readable placeholders like [source] or [1]. Instead, include actual OpenAI-style citations such as [5:7†file-abc123def456]."
-            "These citations will automatically reference document chunks retrieved from the file_search tool. Include them where appropriate throughout the summary."
-
         )
 
-        summary_result = run_query_return(state, summary_prompt)
+        summary_result = run_query_return(state, species, summary_prompt)
         st.session_state.auto_summary = summary_result["text"]
         st.session_state.auto_summary_annotations = summary_result["annotations"]
         st.session_state.last_state = state
@@ -85,7 +81,7 @@ ask_btn = st.button("Ask", key="ask_button")
 
 if ask_btn and user_prompt and state:
     with st.spinner("Getting answer..."):
-        answer = run_query_return(state, user_prompt)
+        answer = run_query_return(state, species, user_prompt)
         st.session_state.chat_history.append((user_prompt, answer))
 
 if st.button("Clear Conversation"):

@@ -1,62 +1,55 @@
+import os
+from dotenv import load_dotenv, find_dotenv
+import json
+from openai import OpenAI
 from configManager import ConfigManager
 from assistantManager import AssistantManager
-import re
-import time
 
-def run_query_return(state: str, prompt: str):
-    from openai import OpenAI
+# Load environment variables from .env
+load_dotenv(find_dotenv())
+
+def run_query_return(state: str, species: str, prompt: str):
+    """
+    Single-shot Responses API call with metadata filtering.
+    Includes debug steps:
+      1) Print the file_search payload
+      2) Perform a metadata-only vector store search
+    Returns dict with 'text' and empty 'annotations'.
+    """
+    # Initialize config and manager
     cfg = ConfigManager()
-    am  = AssistantManager(cfg)
+    am = AssistantManager(cfg)
 
-    assistant = am.get_or_create_assistant(cfg.assistant_name)
-    thread = am.client.beta.threads.create()
+    # Ensure vector store exists
+    vs = am.get_or_create_vector_store(cfg.vector_store_name)
 
-    am.client.beta.threads.messages.create(
-        thread_id=thread.id,
-        role="user",
-        content=f"Please restrict retrieval to documents tagged state={state.upper()}."
+    # Initialize OpenAI client
+    client = OpenAI(api_key=os.getenv(cfg.api_key_env))
+
+    # Build file_search tool with boolean species filter (use 'key' not 'property')
+    file_search = {
+        "type": "file_search",
+        "vector_store_ids": [vs.id],
+        "filters": {
+            "type": "and",
+            "filters": [
+                {"type": "eq", "key": "state", "value": state},
+                {"type": "eq", "key": species, "value": True}
+            ]
+        }
+    }
+
+    # Debug Step 1: log payload
+    print("=== FILE_SEARCH PAYLOAD ===")
+    print(json.dumps(file_search, indent=2))
+    print("===========================")
+
+    # Single-shot Responses API call
+    resp = client.responses.create(
+        model=cfg.model_name,
+        input=prompt,
+        tools=[file_search]
     )
 
-    am.client.beta.threads.messages.create(
-        thread_id=thread.id,
-        role="user",
-        content=prompt
-    )
-
-    run = am.client.beta.threads.runs.create(
-        thread_id=thread.id,
-        assistant_id=assistant.id
-    )
-
-    while run.status != "completed":
-        time.sleep(1)
-        run = am.client.beta.threads.runs.retrieve(
-            thread_id=thread.id,
-            run_id=run.id
-        )
-
-    messages = am.client.beta.threads.messages.list(thread_id=thread.id).data
-    for m in reversed(messages):
-        print("Message role:", m.role)
-        print("Raw content:", m.content)
-        if m.role == "assistant" and isinstance(m.content, list) and hasattr(m.content[0], "text"):
-            content_obj = m.content[0]
-            text = content_obj.text.value
-            annotations = getattr(content_obj.text, "annotations", [])
-            for annotation in annotations:
-                if hasattr(annotation, "text") and hasattr(annotation, "file_citation"):
-                    raw_text = annotation.text  # e.g. '【5:0†source】'
-                    fc = annotation.file_citation
-                    # extract numbers inside raw_text
-                    m2 = re.match(r"【(\d+):(\d+)†source】", raw_text)
-                    if m2:
-                        msg_idx, chunk_idx = m2.groups()
-                        citation_id = f"[{msg_idx}:{chunk_idx}†{fc.file_id}]"
-                    else:
-                        # fallback using file_id with chunk 0
-                        citation_id = f"[0:0†{fc.file_id}]"
-                    text = text.replace(raw_text, citation_id)
-            return {"text": text, "annotations": annotations}
-        elif m.role == "assistant":
-            return {"text": str(m.content), "annotations": []}
-    return {"text": "No answer returned.", "annotations": []}
+    # Return the generated text
+    return {"text": resp.output_text, "annotations": []}

@@ -59,35 +59,47 @@ class AssistantManager:
         ).data
         return any(item.id == file_id for item in ingested)
 
-
     def ingest_file(self, pdf_path: str, state: str = None, species: list = None):
+        """
+        Uploads a PDF to the OpenAI Files API and adds it to the vector store
+        with boolean metadata flags for state and each species present in the filename.
+        """
+        # Determine filename and check for existing upload
         filename = os.path.basename(pdf_path)
         existing = self._find_uploaded_file(filename)
         if existing:
             file_id = existing.id
         else:
+            # Build metadata flags
             metadata = {}
             if state:
                 metadata["state"] = state
             if species:
-                metadata["species"] = ",".join(species)  # Store as comma-separated string for OpenAI
+                for sp in species:
+                    metadata[sp] = True
             if not metadata:
                 metadata = None
+
+            # Upload file to OpenAI
             up = self.client.files.create(
                 file=open(pdf_path, "rb"),
                 purpose="assistants"
             )
             file_id = up.id
 
+        # Ensure vector store exists
         vs = self.vector_store or self.get_or_create_vector_store()
 
+        # Attach to vector store with metadata flags if not already ingested
         if not self._file_already_ingested(file_id):
             return self.client.vector_stores.files.create(
                 vector_store_id=vs.id,
                 file_id=file_id,
                 attributes=metadata
             )
-        return None  
+        return None
+
+
 
     def update_assistant(self):
         if not self.assistant or not self.vector_store:
