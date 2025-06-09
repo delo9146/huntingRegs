@@ -1,12 +1,13 @@
 import streamlit as st
 import re
 import os
+import datetime
 from configManager import ConfigManager
 from query_helper import run_query_return
 
 cfg = ConfigManager()
 
-# build lists of available states & species
+# build lists of available states & species (for the Regulations UI)
 input_dir = cfg.input_dir
 if os.path.exists(input_dir):
     available_states = [
@@ -16,6 +17,13 @@ if os.path.exists(input_dir):
 else:
     available_states = ["MT", "CO"]
 available_species = cfg.valid_species
+
+# ─── build species→units mapping for Montana from regulations.toml ────────────
+species_to_units = {
+    sp: cfg.units_for("Montana", sp)
+    for sp in cfg.valid_species
+    if cfg.units_for("Montana", sp)
+}
 
 # ─── Regulations UI ───────────────────────────────────────────────────────────
 def show_regulations_ui():
@@ -40,21 +48,10 @@ def show_regulations_ui():
     # Generate Summary
     if st.button("Generate Summary"):
         with st.spinner(f"Summarizing {state} – {species}…"):
-            summary_prompt = (
-            f"You are an expert at summarizing complex hunting regulations for users who are planning a hunt. "
-            f"Provide a clear, concise, and extremely detailed summary of the {state} hunting regulations for {species}, including the following sections: \n"
-            "- Season dates and types (archery, general, muzzleloader, etc.)\n"
-            "- Tag and license types available (resident/nonresident, quotas, preference/draw info)\n"
-            "- Application deadlines and how to apply\n"
-            "- Units, regions, or districts where hunting is permitted, including any notable closures or access restrictions\n"
-            "- Bag limits and restrictions (sex/age, antler point, etc.)\n"
-            "- Legal weapons and equipment for each season\n"
-            "- Hunter orange/safety requirements. Specifically, if mentioned, how much orange.\n"
-            "- Special opportunities (SuperTags, youth/senior hunts, landowner tags, auctions)\n"
-            "- Mandatory reporting or check-in requirements\n"
-            "- Any significant rule changes, penalties, or special notes for this year\n\n"
-            "Format the summary with headers and bullet points. Use clear, direct language. "
-        )
+            summary_prompt = cfg.summary_prompt.format(
+                state=state,
+                species=species
+            )
             res = run_query_return(state, species, summary_prompt)
             st.session_state.auto_summary = res["text"]
             st.session_state.auto_summary_annotations = res.get("annotations", [])
@@ -97,15 +94,36 @@ def show_unit_demo_ui():
         on_click=lambda: st.session_state.pop("page", None)
     )
 
-    st.title("Species / Unit Demo")
-    st.write("🔨 This page is under construction. Your species / unit picker goes here.")
+    st.title("📍 Species / Unit Demo")
+    st.write("Select a state, species, and unit to see all regulations for that combination, and whether the species can be hunted today.")
+
+    # 1) Select state (only Montana for demo)
+    state = st.selectbox("Select state", ["Montana"])
+
+    # 2) Select species (only those with units in Montana)
+    species = st.selectbox("Select species", list(species_to_units.keys()))
+
+    # 3) Select unit for that species
+    unit = st.selectbox("Select HD/Unit", species_to_units[species])
+
+    # 4) On click, query regs + current-open status
+    if st.button(f"Show regs for {species.capitalize()} in HD {unit}"):
+        today_str = datetime.date.today().strftime("%B %d, %Y")
+        prompt = cfg.unit_prompt.format(
+            state=state,
+            species=species.capitalize(),
+            unit=unit,
+            today_str=today_str
+        )
+        with st.spinner(f"Querying regs for {species.capitalize()} in HD {unit}…"):
+            res = run_query_return(state, species, prompt)
+        st.markdown(res["text"], unsafe_allow_html=True)
 
 # ─── Home Directory ───────────────────────────────────────────────────────────
 if "page" not in st.session_state:
     st.title("🔧 AI-Tool Directory")
     st.write("Select a demo to run:")
 
-    # clicking sets session_state.page
     st.button(
         "🎯 Hunting Regulations",
         on_click=lambda: st.session_state.__setitem__("page", "regs")
