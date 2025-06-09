@@ -36,3 +36,19 @@ class ConfigManager:
     @property
     def valid_species(self):
         return self._config.get("species", {}).get("valid", [])
+    
+    @property
+    def units(self):
+        return self._config.get("units", {})
+    
+    def units_for(self, state: str, species: str) -> list[str]:
+        return self.units.get(state, {}).get(species, [])
+    
+    @property
+    def summary_prompt(self) -> str:
+        return self._config["prompts"]["summary"]
+
+    @property
+    def unit_prompt(self) -> str:
+        return self._config["prompts"]["unit"]
+
