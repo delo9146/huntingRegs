@@ -2,12 +2,11 @@ import streamlit as st
 import re
 import os
 from configManager import ConfigManager
-from query_helper import run_query_return 
+from query_helper import run_query_return
 
 cfg = ConfigManager()
-available_states = [] 
-available_species = cfg.valid_species
 
+# build lists of available states & species
 input_dir = cfg.input_dir
 if os.path.exists(input_dir):
     available_states = [
@@ -15,31 +14,33 @@ if os.path.exists(input_dir):
         if os.path.isdir(os.path.join(input_dir, d))
     ]
 else:
-    available_states = ["MT", "CO"] 
+    available_states = ["MT", "CO"]
+available_species = cfg.valid_species
 
-st.title("Hunting Regulations AI Demo")
-st.write("Select a state and species to see a summary of hunting regulations. Then, ask specific questions.")
+# ─── Regulations UI ───────────────────────────────────────────────────────────
+def show_regulations_ui():
+    # back button
+    st.button(
+        "⬅️ Back to Home",
+        on_click=lambda: st.session_state.pop("page", None)
+    )
 
-state = st.selectbox("Select state", available_states)
-species = st.selectbox("Select species", available_species)
+    st.title("Hunting Regulations AI Demo")
+    st.write("Select a state and species to see a summary. Then ask specific questions.")
 
-if "last_state" not in st.session_state:
-    st.session_state.last_state = None
-if "last_species" not in st.session_state:
-    st.session_state.last_species = None
+    state = st.selectbox("Select state", available_states)
+    species = st.selectbox("Select species", available_species)
 
-if "auto_summary" not in st.session_state:
-    st.session_state.auto_summary = ""
-if "last_state" not in st.session_state:
-    st.session_state.last_state = None
-if "last_species" not in st.session_state:
-    st.session_state.last_species = None
+    # ensure session-state slots exist
+    st.session_state.setdefault("auto_summary", "")
+    st.session_state.setdefault("auto_summary_annotations", [])
+    st.session_state.setdefault("chat_history", [])
+    st.session_state.setdefault("prompt", "")
 
-summary_btn = st.button("Generate Summary", key="summary_button")
-
-if summary_btn and state and species:
-    with st.spinner(f"Summarizing regulations for {state} - {species}..."):
-        summary_prompt = (
+    # Generate Summary
+    if st.button("Generate Summary"):
+        with st.spinner(f"Summarizing {state} – {species}…"):
+            summary_prompt = (
             f"You are an expert at summarizing complex hunting regulations for users who are planning a hunt. "
             f"Provide a clear, concise, and extremely detailed summary of the {state} hunting regulations for {species}, including the following sections: \n"
             "- Season dates and types (archery, general, muzzleloader, etc.)\n"
@@ -54,47 +55,72 @@ if summary_btn and state and species:
             "- Any significant rule changes, penalties, or special notes for this year\n\n"
             "Format the summary with headers and bullet points. Use clear, direct language. "
         )
+            res = run_query_return(state, species, summary_prompt)
+            st.session_state.auto_summary = res["text"]
+            st.session_state.auto_summary_annotations = res.get("annotations", [])
 
-        summary_result = run_query_return(state, species, summary_prompt)
-        st.session_state.auto_summary = summary_result["text"]
-        st.session_state.auto_summary_annotations = summary_result["annotations"]
-        st.session_state.last_state = state
-        st.session_state.last_species = species
-        print("Annotations from summary:", summary_result["annotations"])
+    # Display Summary if present
+    if st.session_state.auto_summary:
+        st.subheader(f"Summary for {state} – {species}")
+        st.markdown(st.session_state.auto_summary, unsafe_allow_html=True)
 
-if st.session_state.auto_summary:
-    st.subheader(f"Summary for {state} - {species}")
-    st.markdown(st.session_state.auto_summary, unsafe_allow_html=True)
+    st.divider()
+    st.markdown("**Ask a specific question:**")
 
+    # Q&A
+    user_q = st.text_area(
+        "Your question",
+        key="prompt",
+        value=st.session_state.prompt,
+        placeholder="Type your regulation question here…"
+    )
+    if st.button("Ask"):
+        with st.spinner("Getting answer…"):
+            ans = run_query_return(state, species, user_q)
+            st.session_state.chat_history.append((user_q, ans))
 
-st.divider()
-st.markdown("**Ask a specific question about the regulations:**")
+    if st.button("Clear Conversation"):
+        st.session_state.chat_history = []
 
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
-if "prompt" not in st.session_state:
-    st.session_state.prompt = ""
+    if st.session_state.chat_history:
+        st.markdown("## Conversation History")
+        for i, (q, a) in enumerate(st.session_state.chat_history, 1):
+            st.markdown(f"**Q{i}:** {q}")
+            st.markdown(a["text"], unsafe_allow_html=True)
+            st.divider()
 
-user_prompt = st.text_area("Question", key="prompt", value=st.session_state.prompt, placeholder="Type your regulation question here...")
+# ─── Species/Unit Demo UI ───────────────────────────────────────────────────────
+def show_unit_demo_ui():
+    # back button
+    st.button(
+        "⬅️ Back to Home",
+        on_click=lambda: st.session_state.pop("page", None)
+    )
 
-ask_btn = st.button("Ask", key="ask_button")
+    st.title("Species / Unit Demo")
+    st.write("🔨 This page is under construction. Your species / unit picker goes here.")
 
-if ask_btn and user_prompt and state:
-    with st.spinner("Getting answer..."):
-        answer = run_query_return(state, species, user_prompt)
-        st.session_state.chat_history.append((user_prompt, answer))
+# ─── Home Directory ───────────────────────────────────────────────────────────
+if "page" not in st.session_state:
+    st.title("🔧 AI-Tool Directory")
+    st.write("Select a demo to run:")
 
-if st.button("Clear Conversation"):
-    st.session_state.chat_history = []
+    # clicking sets session_state.page
+    st.button(
+        "🎯 Hunting Regulations",
+        on_click=lambda: st.session_state.__setitem__("page", "regs")
+    )
+    st.button(
+        "📍 Species / Unit Demo",
+        on_click=lambda: st.session_state.__setitem__("page", "demo")
+    )
 
-if st.session_state.chat_history:
-    st.markdown("## Conversation History")
-    for i, (q, a) in enumerate(st.session_state.chat_history, 1):
-        st.markdown(f"**Q{i}:** {q}")
-        st.markdown(a["text"], unsafe_allow_html=True)
-        st.divider()
+    # if still no choice, halt here
+    if "page" not in st.session_state:
+        st.stop()
 
-
-
-
-
+# ─── Branch to the selected page ───────────────────────────────────────────────
+if st.session_state.page == "regs":
+    show_regulations_ui()
+elif st.session_state.page == "demo":
+    show_unit_demo_ui()
