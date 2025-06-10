@@ -13,7 +13,6 @@ if "page" not in st.session_state:
     if "page" not in st.session_state:
         st.stop()
 
-# Route to correct UI
 if st.session_state.page == "regs":
     show_regulations_ui()
 elif st.session_state.page == "demo":

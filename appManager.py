@@ -6,7 +6,6 @@ from query_helper import run_query_return, extract_legality_from_text
 
 cfg = ConfigManager()
 
-# build lists of available states & species (for the Regulations UI)
 input_dir = cfg.input_dir
 if os.path.exists(input_dir):
     available_states = [
@@ -17,7 +16,6 @@ else:
     available_states = ["MT", "CO"]
 available_species = cfg.valid_species
 
-# ─── build species→units mapping for Montana from regulations.toml ────────────
 species_to_units = {
     sp: cfg.units_for("Montana", sp)
     for sp in cfg.valid_species
@@ -25,7 +23,6 @@ species_to_units = {
 }
 
 def show_regulations_ui():
-    # back button
     st.button(
         "⬅️ Back to Home",
         on_click=lambda: st.session_state.pop("page", None)
@@ -37,7 +34,6 @@ def show_regulations_ui():
     state = st.selectbox("Select state", available_states)
     species = st.selectbox("Select species", available_species)
 
-    # ensure session-state slots exist
     st.session_state.setdefault("auto_summary", "")
     st.session_state.setdefault("auto_summary_annotations", [])
     st.session_state.setdefault("chat_history", [])
@@ -86,7 +82,6 @@ def show_regulations_ui():
 
 
 def show_unit_demo_ui():
-    # back button
     st.button(
         "⬅️ Back to Home",
         on_click=lambda: st.session_state.pop("page", None)
@@ -132,11 +127,8 @@ def show_unit_demo_ui():
             else:
                 st.warning("⚠️ Couldn't determine legality with confidence. Please review the regulations manually.")
 
-            # Optional: show explanation
             st.caption(res["text"])
 
-
-    # 4) On click, query regs + current-open status
     if st.button(f"Show regs for {species.capitalize()} in HD {unit}"):
         today_str = datetime.date.today().strftime("%B %d, %Y")
         prompt = cfg.unit_prompt.format(
