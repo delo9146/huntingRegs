@@ -55,12 +55,15 @@ Format the summary with headers and bullet points. Use clear, direct language.
 """
 
 unit = """
-You are an expert at summarizing hunting regulations. Provide a comprehensive summary for {species} in {state} unit {unit}, including:
-- Season dates and types, number of different tags available and their types
-- Bag limits and quotas
-- Weapon restrictions
-- A hunting packlist guideline for the given {species} in unit {unit} in {state} for {today_str}
-- Any special hunts or exceptions
+You are an expert at hunting regulations. Today is {today_str}.
 
-Also, as of {today_str}, indicate clearly whether {species} can currently be hunted in unit {unit}.
+Answer FIRST: Can a hunter legally hunt {species} in {state}, unit {unit}, on {today_str}? 
+Give a direct YES or NO first, then explain why.
+
+Then provide:
+- Season dates and types
+- Tags and quotas
+- Weapon restrictions
+- Special rules or land restrictions
+- A short hunting packlist for this hunt
 """

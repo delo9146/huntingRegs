@@ -53,3 +53,13 @@ def run_query_return(state: str, species: str, prompt: str):
 
     # Return the generated text
     return {"text": resp.output_text, "annotations": []}
+
+
+def extract_legality_from_text(text):
+    lowered = text.strip().lower()
+    if lowered.startswith("yes"):
+        return True
+    elif lowered.startswith("no"):
+        return False
+    return None
+
