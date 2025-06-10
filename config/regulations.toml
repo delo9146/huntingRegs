@@ -39,31 +39,81 @@ black-bear = ["100", "101", "103", "104", "110", "120", "121", "122", "123", "13
 [prompts]
 
 summary = """
-You are an expert at summarizing complex hunting regulations for users who are planning a hunt. Provide a clear, concise, and extremely detailed summary of the {state} hunting regulations for {species}, including the following sections:
-- Season dates and types (archery, general, muzzleloader, etc.)
-- Tag and license types available (resident/nonresident, quotas, preference/draw info)
-- Application deadlines and how to apply
-- Units, regions, or districts where hunting is permitted, including any notable closures or access restrictions
-- Bag limits and restrictions (sex/age, antler point, etc.)
-- Legal weapons and equipment for each season
-- Hunter orange/safety requirements. Specifically, if mentioned, how much orange.
-- Special opportunities (SuperTags, youth/senior hunts, landowner tags, auctions)
-- Mandatory reporting or check-in requirements
-- Any significant rule changes, penalties, or special notes for this year
+You are an expert at summarizing hunting regulations. Generate a comprehensive and well-structured summary of the {state} hunting regulations for {species}, based on the current regulatory guide. Your summary must be highly detailed, accurate, and formatted with clear section headers and bullet points.
 
-Format the summary with headers and bullet points. Use clear, direct language.
+Include the following:
+
+1. **Season Structure**
+   - All season types and exact dates (archery, general, muzzleloader, youth hunts, shoulder seasons, etc.)
+   - Sunrise/sunset table reference or rules for legal shooting hours
+   - Heritage Muzzleloader Season and applicable limitations
+
+2. **Licenses and Permits**
+   - Required base licenses, species licenses, and any prerequisite documentation
+   - Tag types: general, B-tags, permits, combo licenses (resident vs. nonresident)
+   - Cost, quota range (if stated), drawing status (OTC vs. lottery), and application deadlines
+   - Bonus points, preference points, and party application rules
+
+3. **Eligibility and Requirements**
+   - Residency requirements for purchasing licenses
+   - Hunter education requirements by age group
+   - Apprentice hunting and youth-specific rules
+   - Disability accommodations (e.g., PTMAE, PTHFV)
+
+4. **Access and Land Use**
+   - Public and private land access rules
+   - Block Management Areas (BMAs), State School Trust Lands, and Wildlife Management Areas
+   - Road and OHV restrictions, stream access law, and 12-hour closure rules (if applicable)
+
+5. **Weapon and Gear Regulations**
+   - Legal weapons by season (bow, rifle, muzzleloader, handgun, shotgun)
+   - Equipment-specific restrictions (e.g., optics on muzzleloaders)
+   - Archery and crossbow modification rules
+   - Hunter orange/safety requirements. Specifically, if mentioned, provide how much orange (such as inches)
+
+6. **Bag Limits and Animal Classification**
+   - Bag limits, age/sex restrictions (e.g., antlered vs. antlerless)
+   - Definitions for trophy criteria (e.g., “point” definition)
+   - Special notes on CWD zones and carcass transport/disposal
+
+7. **Special Opportunities**
+   - SuperTags, Landowner tags, Youth hunts, Game Damage Hunts, Hunters Against Hunger
+   - Drawing statistics, multi-district licenses, and leftover license policy
+
+8. **Reporting and Compliance**
+   - Mandatory harvest reporting
+   - Inspection, tagging, and evidence-of-sex requirements
+   - Legal transport, replacement licenses, and penalties for violations
+
+9. **Recent Changes and Key Dates**
+   - Year-over-year rule changes or commission updates
+   - Application deadlines, drawing dates, and important milestones
+
+Use bold headers for each section. Keep the writing concise but dense with information. Prioritize factual completeness over brevity. Avoid speculation.
 """
+
 
 unit = """
-You are an expert at hunting regulations. Today is {today_str}.
+You are an expert in hunting regulations. Today is {today_str}.
 
-Answer FIRST: Can a hunter legally hunt {species} in {state}, unit {unit}, on {today_str}? 
-Give a direct YES or NO first, then explain why.
+A hunter is planning a hunt for {species} in {state}, unit {unit}.
 
-Then provide:
-- Season dates and types
-- Tags and quotas
-- Weapon restrictions
-- Special rules or land restrictions
-- A short hunting packlist for this hunt
+Your task:
+
+1. **Start with a bold YES or NO**: Can {species} be legally hunted in unit {unit} on {today_str}? 
+    - Say "YES" or "NO" clearly at the top.
+    - Explain briefly why — include season name and valid dates, or why it's closed.
+
+2. **Summarize unit-specific regulations only**:
+    - Season types & exact dates for this species in unit {unit}
+    - Tag or license type(s) required, including quota or draw info if available
+    - Weapon restrictions for this unit (e.g., archery only, shotgun zones)
+    - Special rules, closures, land access issues, or safety zones
+
+3. **End with a short gear tip**:
+    - Suggest 3–5 items tailored to the terrain, season, or hunt type for this unit
+
+DO NOT summarize general state regulations. Stay focused on unit {unit} for {species}.
+Format your response cleanly with section headers.
 """
+
