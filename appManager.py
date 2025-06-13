@@ -42,10 +42,11 @@ def show_regulations_ui():
     # Generate Summary
     if st.button("Generate Summary"):
         with st.spinner(f"Summarizing {state} – {species}…"):
-            summary_prompt = cfg.summary_prompt.format(
+            summary_prompt = cfg.summary_prompt_for(state).format(
                 state=state,
                 species=species
             )
+            print(summary_prompt)
             res = run_query_return(state, species, summary_prompt)
             st.session_state.auto_summary = res["text"]
             st.session_state.auto_summary_annotations = res.get("annotations", [])

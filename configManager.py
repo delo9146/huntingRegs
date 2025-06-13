@@ -51,4 +51,8 @@ class ConfigManager:
     @property
     def unit_prompt(self) -> str:
         return self._config["prompts"]["unit"]
+    
+    def summary_prompt_for(self, state: str) -> str:
+        return self._config.get("prompts_by_state", {}).get(state, {}).get("summary", self.summary_prompt)
+
 
