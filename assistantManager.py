@@ -95,8 +95,16 @@ class AssistantManager:
             return self.client.vector_stores.files.create(
                 vector_store_id=vs.id,
                 file_id=file_id,
-                attributes=metadata
+                attributes=metadata,
+                chunking_strategy={
+                    "type": "static",
+                    "static": {
+                        "max_chunk_size_tokens": 800,
+                        "chunk_overlap_tokens": 400
+                    }
+                }
             )
+
         return None
 
 
