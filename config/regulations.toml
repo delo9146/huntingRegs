@@ -116,115 +116,180 @@ DO NOT summarize general state regulations. Stay focused on unit {unit} for {spe
 Format your response cleanly with section headers.
 """
 
-[prompts_by_state.Montana]
-summary = """
+[summary_prompt_by_state.Montana]
+general_intro = """
 You are an expert at summarizing hunting regulations. Generate a comprehensive and well-structured summary of the {state} hunting regulations for {species}, based on the current regulatory guide. Your summary must be highly detailed, accurate, and formatted with clear section headers and bullet points.
 
 Include the following:
+"""
 
+general_outro = """
+Use bold headers for each section. Keep the writing concise but dense with information. Prioritize factual completeness over brevity. Avoid speculation.
+"""
+
+[section_templates_by_state.Montana]
+Season_Structure = """
 1. **Season Structure**
    - All season types and exact dates (archery, general, muzzleloader, youth hunts, shoulder seasons, etc.)
    - Sunrise/sunset table reference or rules for legal shooting hours
    - Heritage Muzzleloader Season and applicable limitations
+"""
 
+Licenses_and_Permits = """
 2. **Licenses and Permits**
    - Required base licenses, species licenses, and any prerequisite documentation
    - Tag types: general, B-tags, permits, combo licenses (resident vs. nonresident)
    - Cost, quota range (if stated), drawing status (OTC vs. lottery), and application deadlines
    - Bonus points, preference points, and party application rules
+"""
 
+Eligibility_and_Requirements = """
 3. **Eligibility and Requirements**
    - Residency requirements for purchasing licenses
    - Hunter education requirements by age group
    - Apprentice hunting and youth-specific rules
    - Disability accommodations (e.g., PTMAE, PTHFV)
+"""
 
+Access_and_Land_Use = """
 4. **Access and Land Use**
    - Public and private land access rules
    - Block Management Areas (BMAs), State School Trust Lands, and Wildlife Management Areas
    - Road and OHV restrictions, stream access law, and 12-hour closure rules (if applicable)
+"""
 
+Weapon_and_Gear_Regulations = """
 5. **Weapon and Gear Regulations**
    - Legal weapons by season (bow, rifle, muzzleloader, handgun, shotgun)
    - Equipment-specific restrictions (e.g., optics on muzzleloaders)
    - Archery and crossbow modification rules
    - Hunter orange/safety requirements. Specifically, hunting regulations mention the amount of orange required for a hunter to legally hunt, you need to provide that information.
+"""
 
+Bag_Limits_and_Animal_Classification = """
 6. **Bag Limits and Animal Classification**
    - Bag limits, age/sex restrictions (e.g., antlered vs. antlerless)
    - Definitions for trophy criteria (e.g., “point” definition)
    - Special notes on CWD zones and carcass transport/disposal
+"""
 
+Special_Opportunities = """
 7. **Special Opportunities**
    - SuperTags, Landowner tags, Youth hunts, Game Damage Hunts, Hunters Against Hunger
    - Drawing statistics, multi-district licenses, and leftover license policy
+"""
 
+Reporting_and_Compliance = """
 8. **Reporting and Compliance**
    - Mandatory harvest reporting
    - Inspection, tagging, and evidence-of-sex requirements
    - Legal transport, replacement licenses, and penalties for violations
+"""
 
+Recent_Changes_and_Key_Dates = """
 9. **Recent Changes and Key Dates**
    - Year-over-year rule changes or commission updates
    - Application deadlines, drawing dates, and important milestones
-
-Use bold headers for each section. Keep the writing concise but dense with information. Prioritize factual completeness over brevity. Avoid speculation.
 """
 
-[prompts_by_state.Colorado]
-summary = """
+[sectional_queries_by_state.Montana]
+Season_Structure = "What is the hunting season structure in Montana, including dates for all season types, legal shooting hours, and muzzleloader-specific limitations?"
+Licenses_and_Permits = "What licenses and permits are required to hunt in Montana, including types, costs, quotas, draw info, and application deadlines?"
+Eligibility_and_Requirements = "What eligibility requirements must a Montana hunter meet, including residency, education, apprentice programs, and disability accommodations?"
+Access_and_Land_Use = "What are the rules for public and private land access for hunting in Montana, including Block Management, Trust Lands, and road or OHV restrictions?"
+Weapon_and_Gear_Regulations = "What are the legal weapons, gear restrictions, and safety clothing requirements for hunting in Montana?"
+Bag_Limits_and_Animal_Classification = "What are the bag limits and how are animals classified for hunting in Montana, including definitions for points and antler types?"
+Special_Opportunities = "What special hunting opportunities exist in Montana, such as SuperTags, youth hunts, landowner tags, or damage hunts?"
+Reporting_and_Compliance = "What reporting, tagging, and legal compliance requirements exist for hunters in Montana?"
+Recent_Changes_and_Key_Dates = "What are the key regulation changes and important dates for Montana hunters this year?"
+
+[summary_prompt_by_state.Colorado]
+general_intro = """
 You are an expert at summarizing hunting regulations. Generate a comprehensive and well-structured summary of the {state} hunting regulations for {species}, based on the current regulatory guide. Your summary must be highly detailed, accurate, and formatted with clear section headers and bullet points.
 
 Focus your summary for Colorado on the following categories:
+"""
 
+general_outro = """
+Use bold section headers. Write clearly, accurately, and without speculation. Focus on factual detail and regulatory clarity over style or persuasion.
+"""
+
+[section_templates_by_state.Colorado]
+Season_Structure = """
 1. **Season Dates and Structure**
    - All applicable season types and exact dates (archery, muzzleloader, first–fourth rifle seasons, late-season hunts)
    - Early/late rifle seasons for youth or private lands (RFW, etc.)
    - Over-the-counter vs. limited license seasons
    - Legal shooting hours and sunrise/sunset references
+"""
 
+Licenses_and_Permits = """
 2. **Licensing and Fees**
    - Base license and habitat stamp requirements
    - Limited license draws vs. OTC tags, and list of GMUs that apply
    - Application deadlines and preference point system (including hybrid draw)
    - License types: List A/B/C and what they mean
    - Fees by residency (resident vs. nonresident), youth discounts, and veteran/senior considerations
+"""
 
+Eligibility_and_Requirements = """
 3. **Hunter Requirements and Eligibility**
    - Hunter education certification and minimum age
    - Youth hunting opportunities and mentor rules
    - Mobility-impaired hunting accommodations and permits
+"""
 
+Access_and_Land_Use = """
 4. **Unit and Land Access Considerations**
    - GMU-specific notes or closures (e.g., bear hunt restrictions in occupied grizzly range)
    - Access programs: Walk-In Access, State Trust Lands, State Wildlife Areas (SWAs), federal lands
    - Private-land-only license programs and Ranching for Wildlife (RFW)
+"""
 
+Weapon_and_Gear_Regulations = """
 5. **Weapon Restrictions and Legal Methods**
    - Approved methods of take by season (archery, muzzleloader, rifle)
    - Muzzleloader limitations: open sights, projectile requirements, no sabots
    - Archery equipment specs: draw weight, broadhead type, crossbow rules
    - Orange or pink safety clothing rules (square inches, garment placement)
+"""
 
+Bag_Limits_and_Animal_Classification = """
 6. **Bag Limits and Sex/Age Restrictions**
    - Antler/antlerless definitions for each species
    - Trophy point definitions (e.g., 4-point brow tines, spread width)
    - GMU-specific bag limit rules, especially for bear and pronghorn
+"""
 
+Special_Opportunities = """
 7. **Special Programs and Opportunities**
    - Leftover day and reissue process for returned licenses
    - Youth hunt coordinator programs
    - Landowner preference program and voucher types
    - Annual license return policy and how refund/point restoration works
+"""
 
+Reporting_and_Compliance = """
 8. **Harvest Reporting and Legal Compliance**
    - Mandatory reporting requirements (e.g., bear harvest)
    - Tagging and carcass transport rules
    - Evidence-of-sex rules and inspection guidelines
+"""
 
+Recent_Changes_and_Key_Dates = """
 9. **Recent Changes and Key Information**
    - New rule changes for the current season (weapon restrictions, hunt codes)
    - Important dates (application, payment, leftover sales)
-
-Use bold section headers. Write clearly, accurately, and without speculation. Focus on factual detail and regulatory clarity over style or persuasion.
 """
+
+
+[sectional_queries_by_state.Colorado]
+Season_Structure = "What is the hunting season structure in Colorado, including all season types, dates, and OTC vs limited license designations?"
+Licenses_and_Permits = "What licenses, fees, and draw processes apply in Colorado, including base requirements and preference point systems?"
+Eligibility_and_Requirements = "What are the hunter education and eligibility rules in Colorado, including youth and mobility-impaired programs?"
+Access_and_Land_Use = "What land access rules apply in Colorado, including private-land-only tags, RFW, and access programs like SWA or Walk-In Access?"
+Weapon_and_Gear_Regulations = "What are the legal methods of take in Colorado, including archery/muzzleloader restrictions and safety clothing requirements?"
+Bag_Limits_and_Animal_Classification = "How are bag limits and animal classifications defined in Colorado, especially by GMU or species?"
+Special_Opportunities = "What special programs or hunts are available in Colorado, including youth hunts, landowner vouchers, or license returns?"
+Reporting_and_Compliance = "What are Colorado's tagging, reporting, and transport rules for legally taken game?"
+Recent_Changes_and_Key_Dates = "What recent changes to hunting regulations and important seasonal dates apply in Colorado?"

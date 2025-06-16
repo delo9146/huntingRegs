@@ -54,5 +54,22 @@ class ConfigManager:
     
     def summary_prompt_for(self, state: str) -> str:
         return self._config.get("prompts_by_state", {}).get(state, {}).get("summary", self.summary_prompt)
+    
+    def sectional_queries_for(self, state: str) -> dict:
+        """
+        Return a dictionary of section name → query string for the given state.
+        """
+        return self._config.get("sectional_queries_by_state", {}).get(state, {})
+    
+    def summary_intro_for(self, state: str) -> str:
+        return self._config.get("summary_prompt_by_state", {}).get(state, {}).get("general_intro", "")
+
+    def summary_outro_for(self, state: str) -> str:
+        return self._config.get("summary_prompt_by_state", {}).get(state, {}).get("general_outro", "")
+
+    def section_templates_for(self, state: str) -> dict:
+        return self._config.get("section_templates_by_state", {}).get(state, {})
+
+
 
 

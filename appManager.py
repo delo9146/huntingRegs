@@ -46,8 +46,7 @@ def show_regulations_ui():
                 state=state,
                 species=species
             )
-            print(summary_prompt)
-            res = run_query_return(state, species, summary_prompt)
+            res = run_query_return(state, species, inject_chunks=True)
             st.session_state.auto_summary = res["text"]
             st.session_state.auto_summary_annotations = res.get("annotations", [])
 
