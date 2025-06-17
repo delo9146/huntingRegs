@@ -76,8 +76,9 @@ def retrieve_section_chunks(state: str, species: str) -> dict:
     queries = cfg.sectional_queries_for(state)
 
     section_chunks = {}
-
-    for section, query in queries.items():
+    #retrieval API/vector_stores.search()
+    for section, query_template in queries.items():
+        query = query_template.format(species=species)
         results = client.vector_stores.search(
             vector_store_id=vs.id,
             query=query,
@@ -91,6 +92,7 @@ def retrieve_section_chunks(state: str, species: str) -> dict:
             max_num_results=1,
             rewrite_query=False
         )
+
 
         if results.data:
             section_chunks[section] = results.data[0].content[0].text.strip()

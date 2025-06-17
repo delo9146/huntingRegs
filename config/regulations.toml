@@ -193,15 +193,16 @@ Recent_Changes_and_Key_Dates = """
 """
 
 [sectional_queries_by_state.Montana]
-Season_Structure = "What is the hunting season structure in Montana, including dates for all season types, legal shooting hours, and muzzleloader-specific limitations?"
-Licenses_and_Permits = "What licenses and permits are required to hunt in Montana, including types, costs, quotas, draw info, and application deadlines?"
-Eligibility_and_Requirements = "What eligibility requirements must a Montana hunter meet, including residency, education, apprentice programs, and disability accommodations?"
-Access_and_Land_Use = "What are the rules for public and private land access for hunting in Montana, including Block Management, Trust Lands, and road or OHV restrictions?"
-Weapon_and_Gear_Regulations = "What are the legal weapons, gear restrictions, and safety clothing requirements for hunting in Montana?"
-Bag_Limits_and_Animal_Classification = "What are the bag limits and how are animals classified for hunting in Montana, including definitions for points and antler types?"
-Special_Opportunities = "What special hunting opportunities exist in Montana, such as SuperTags, youth hunts, landowner tags, or damage hunts?"
-Reporting_and_Compliance = "What reporting, tagging, and legal compliance requirements exist for hunters in Montana?"
-Recent_Changes_and_Key_Dates = "What are the key regulation changes and important dates for Montana hunters this year?"
+Season_Structure = "What is the hunting season structure in Montana for {species}, including dates for all season types, legal shooting hours, and muzzleloader-specific limitations?"
+Licenses_and_Permits = "What licenses and permits are required to hunt {species} in Montana, including types, costs, quotas, draw info, and application deadlines?"
+Eligibility_and_Requirements = "What eligibility requirements must a Montana hunter meet to hunt {species}, including residency, education, apprentice programs, and disability accommodations?"
+Access_and_Land_Use = "What are the land access rules for hunting {species} in Montana, including Block Management, Trust Lands, and road or OHV restrictions?"
+Weapon_and_Gear_Regulations = "What are the legal weapons, gear restrictions, and safety clothing requirements for hunting {species} in Montana?"
+Bag_Limits_and_Animal_Classification = "What are the bag limits and animal classifications for {species} in Montana, including definitions for points and antler types?"
+Special_Opportunities = "What special hunting opportunities exist for {species} in Montana, such as SuperTags, youth hunts, landowner tags, or damage hunts?"
+Reporting_and_Compliance = "What reporting, tagging, and legal compliance requirements apply to hunting {species} in Montana?"
+Recent_Changes_and_Key_Dates = "What are the key regulation changes and important dates related to {species} hunting in Montana this year?"
+
 
 [summary_prompt_by_state.Colorado]
 general_intro = """
@@ -215,24 +216,81 @@ Use bold section headers. Write clearly, accurately, and without speculation. Fo
 """
 
 [section_templates_by_state.Colorado]
-Season_Structure = "Summarize the full structure of Colorado hunting seasons, including archery, muzzleloader, rifle (1st–4th), late seasons, Ranching for Wildlife, and legal shooting hours."
-Licenses_and_Permits = "What types of hunting licenses and permits are available in Colorado, including base licenses, habitat stamps, limited vs OTC tags, and the A/B/C license classification system?"
-Eligibility_and_Requirements = "What are the hunter education, age, and eligibility requirements for hunting in Colorado? Include youth programs, mentorship rules, and mobility-impaired accommodations."
-Access_and_Land_Use = "What are the land access rules for hunting in Colorado, including Walk-In Access, State Wildlife Areas, State Trust Lands, federal lands, and Ranching for Wildlife properties?"
-Weapon_and_Gear_Regulations = "What weapon and gear regulations apply to hunting in Colorado, including legal methods of take by season, muzzleloader and archery requirements, and blaze orange/pink clothing rules?"
-Bag_Limits_and_Animal_Classification = "How are bag limits, antler/antlerless classifications, and trophy definitions structured for big game in Colorado? Include any exceptions like accidental kills or damage control hunts."
-Special_Opportunities = "What special hunting opportunities and programs are available in Colorado, such as youth hunts, landowner vouchers, Wounded Warrior programs, and leftover or returned licenses?"
-Reporting_and_Compliance = "What harvest reporting, carcass tagging, transport, and evidence-of-sex requirements exist in Colorado hunting regulations? Include mandatory check or inspection rules if present."
-Recent_Changes_and_Key_Dates = "What are the recent rule changes and important hunting dates in Colorado, including application deadlines, season openings, and updated license policies?"
+Season_Structure = """
+1. **Season Dates and Structure**
+   - All applicable season types and exact dates (archery, muzzleloader, first–fourth rifle seasons, late-season hunts)
+   - Early/late rifle seasons for youth or private lands (RFW, etc.)
+   - Over-the-counter vs. limited license seasons
+   - Legal shooting hours and sunrise/sunset references
+"""
+
+Licenses_and_Permits = """
+2. **Licensing and Fees**
+   - Base license and habitat stamp requirements
+   - Limited license draws vs. OTC tags, and list of GMUs that apply
+   - Application deadlines and preference point system (including hybrid draw)
+   - License types: List A/B/C and what they mean
+   - Fees by residency (resident vs. nonresident), youth discounts, and veteran/senior considerations
+"""
+
+Eligibility_and_Requirements = """
+3. **Hunter Requirements and Eligibility**
+   - Hunter education certification and minimum age
+   - Youth hunting opportunities and mentor rules
+   - Mobility-impaired hunting accommodations and permits
+"""
+
+Access_and_Land_Use = """
+4. **Unit and Land Access Considerations**
+   - GMU-specific notes or closures (e.g., bear hunt restrictions in occupied grizzly range)
+   - Access programs: Walk-In Access, State Trust Lands, State Wildlife Areas (SWAs), federal lands
+   - Private-land-only license programs and Ranching for Wildlife (RFW)
+"""
+
+Weapon_and_Gear_Regulations = """
+5. **Weapon Restrictions and Legal Methods**
+   - Approved methods of take by season (archery, muzzleloader, rifle)
+   - Muzzleloader limitations: open sights, projectile requirements, no sabots
+   - Archery equipment specs: draw weight, broadhead type, crossbow rules
+   - Orange or pink safety clothing rules (square inches, garment placement)
+"""
+
+Bag_Limits_and_Animal_Classification = """
+6. **Bag Limits and Sex/Age Restrictions**
+   - Antler/antlerless definitions for each species
+   - Trophy point definitions (e.g., 4-point brow tines, spread width)
+   - GMU-specific bag limit rules, especially for bear and pronghorn
+"""
+
+Special_Opportunities = """
+7. **Special Programs and Opportunities**
+   - Leftover day and reissue process for returned licenses
+   - Youth hunt coordinator programs
+   - Landowner preference program and voucher types
+   - Annual license return policy and how refund/point restoration works
+"""
+
+Reporting_and_Compliance = """
+8. **Harvest Reporting and Legal Compliance**
+   - Mandatory reporting requirements (e.g., bear harvest)
+   - Tagging and carcass transport rules
+   - Evidence-of-sex rules and inspection guidelines
+"""
+
+Recent_Changes_and_Key_Dates = """
+9. **Recent Changes and Key Information**
+   - New rule changes for the current season (weapon restrictions, hunt codes)
+   - Important dates (application, payment, leftover sales)
+"""
 
 
 [sectional_queries_by_state.Colorado]
-Season_Structure = "What is the hunting season structure in Colorado, including all season types, dates, and OTC vs limited license designations?"
-Licenses_and_Permits = "What licenses, fees, and draw processes apply in Colorado, including base requirements and preference point systems?"
-Eligibility_and_Requirements = "What are the hunter education and eligibility rules in Colorado, including youth and mobility-impaired programs?"
-Access_and_Land_Use = "What land access rules apply in Colorado, including private-land-only tags, RFW, and access programs like SWA or Walk-In Access?"
-Weapon_and_Gear_Regulations = "What are the legal methods of take in Colorado, including archery/muzzleloader restrictions and safety clothing requirements?"
-Bag_Limits_and_Animal_Classification = "How are bag limits and animal classifications defined in Colorado, especially by GMU or species?"
-Special_Opportunities = "What special programs or hunts are available in Colorado, including youth hunts, landowner vouchers, or license returns?"
-Reporting_and_Compliance = "What are Colorado's tagging, reporting, and transport rules for legally taken game?"
-Recent_Changes_and_Key_Dates = "What recent changes to hunting regulations and important seasonal dates apply in Colorado?"
+Season_Structure = "Summarize all Colorado {species} hunting season types and corresponding dates, including archery, muzzleloader, rifle (1st–4th), private-land-only seasons, late seasons, and Ranching for Wildlife hunts. Include legal shooting hours."
+Licenses_and_Permits = "List all required hunting licenses, base licenses, habitat stamps, and fees for hunting {species} in Colorado. Explain the OTC versus limited licensing system, draw process, preference points, and the A/B/C license types."
+Eligibility_and_Requirements = "What are the hunter education requirements, age-based rules, residency standards, and mobility-impaired eligibility accommodations for hunting {species} in Colorado?"
+Access_and_Land_Use = "Describe Colorado's land access programs for {species} hunting, including Walk-In Access, State Wildlife Areas, State Trust Lands, Ranching for Wildlife rules, and federal land access. Note any restrictions or agreements affecting public access."
+Weapon_and_Gear_Regulations = "List the legal hunting weapons and equipment restrictions for hunting {species} in Colorado by season type. Include muzzleloader and archery requirements, and mandatory blaze orange or fluorescent pink clothing regulations."
+Bag_Limits_and_Animal_Classification = "Explain Colorado’s bag limits and classifications for {species}, including definitions for antlered vs. antlerless animals, trophy rules, and any exceptions like damage control or accidental kills."
+Special_Opportunities = "Detail special hunting opportunities in Colorado for {species}, such as youth hunts, Wounded Warrior programs, landowner vouchers, game damage licenses, and leftover or returned license policies."
+Reporting_and_Compliance = "Describe the mandatory reporting, carcass tagging, transport regulations, and evidence-of-sex requirements when hunting {species} in Colorado. Include any CWD testing or inspection rules."
+Recent_Changes_and_Key_Dates = "Summarize any notable regulation changes or key dates for hunting {species} in Colorado, including draw deadlines, hunt code changes, or season updates."
