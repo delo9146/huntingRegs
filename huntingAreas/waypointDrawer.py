@@ -2,7 +2,7 @@ import os
 import json
 import re
 from PIL import Image, ImageDraw, ImageFont
-from hunting.ConfigManager import ConfigManager
+from huntingAreas.ConfigManager import ConfigManager
 
 class WaypointDrawer:
     @staticmethod

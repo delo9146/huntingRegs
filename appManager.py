@@ -4,6 +4,10 @@ import streamlit as st
 from configManager import ConfigManager
 from query_helper import run_query_return, extract_legality_from_text
 
+from huntingAreas.ConfigManager import ConfigManager as HuntingConfigManager
+from huntingAreas.imageAnalysis import ImageAnalysisManager
+from huntingAreas.waypointDrawer import WaypointDrawer
+
 cfg = ConfigManager()
 
 input_dir = cfg.input_dir
@@ -140,3 +144,55 @@ def show_unit_demo_ui():
         with st.spinner(f"Querying regs for {species.capitalize()} in HD {unit}…"):
             res = run_query_return(state, species, prompt)
         st.markdown(res["text"], unsafe_allow_html=True)
+
+
+
+def show_hunting_areas_ui():
+    # Back button
+    st.button("⬅️ Back to Home", on_click=lambda: st.session_state.pop("page", None))
+    st.title("🗺️ Hunting Areas")
+
+    # 1) Build path to your HuntingAreas input folder
+    input_dir = os.path.join(
+        os.path.dirname(__file__),
+        "huntingAreas",   # your folder name
+        "data",
+        "input"
+    )
+    if not os.path.isdir(input_dir):
+        st.error(f"Input folder not found:\n`{input_dir}`")
+        return
+
+    # 2) Let user pick one of the map images
+    image_files = sorted(f for f in os.listdir(input_dir)
+                         if f.lower().endswith((".png", ".jpg", ".jpeg")))
+    selected = st.selectbox("Select a map image", ["--"] + image_files)
+    if selected == "--":
+        return
+
+    image_path = os.path.join(input_dir, selected)
+    st.subheader("Original Map")
+    st.image(image_path, use_container_width=True)
+
+    # 3) Analyze when clicked
+    if st.button("Analyze Map"):
+        with st.spinner("Running analysis…"):
+            # load the prompt template for this species
+            cfg_h = HuntingConfigManager()
+            species_key = "elk"
+            prompt_tmpl = cfg_h.load_species_prompt(species_key)
+
+            # run GPT-4o vision + text
+            analyzer = ImageAnalysisManager()
+            reasoning = analyzer.analyze_image(image_path, prompt_tmpl)
+
+            # draw the waypoints on the original
+            out_path, parsed = WaypointDrawer.draw_waypoints(image_path, reasoning)
+
+        # 4) Display results
+        st.subheader("Annotated Map")
+        st.image(out_path, use_container_width=True)
+
+        st.subheader("Model Reasoning")
+        st.code(reasoning)
+

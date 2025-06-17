@@ -1,5 +1,5 @@
 import streamlit as st
-from appManager import show_regulations_ui, show_unit_demo_ui
+from appManager import show_regulations_ui, show_unit_demo_ui, show_hunting_areas_ui
 
 st.set_page_config(page_title="Hunting Regs AI Demo", layout="wide")
 
@@ -19,13 +19,4 @@ if st.session_state.page == "regs":
 elif st.session_state.page == "demo":
     show_unit_demo_ui()
 elif st.session_state.page == "areas":
-    st.button(
-        "⬅️ Back to Home",
-        on_click=lambda: st.session_state.pop("page", None)
-    )
-    st.header("🗺️ Hunting Areas – Coming Soon")
-    st.write(
-        """
-        This feature is under construction.
-        """
-    )
+    show_hunting_areas_ui()

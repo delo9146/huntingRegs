@@ -22,16 +22,18 @@ class ImageAnalysisManager:
         image_b64 = self.encode_image_to_base64(grid_path)
         image_data_url = f"data:image/png;base64,{image_b64}"
 
-        #few-shot example
-        example_img = "data/fewShot/oldBaldyFire_grid.png"
+        # few-shot example
+        base_dir     = os.path.dirname(__file__)                    
+        few_shot_dir = os.path.join(base_dir, "data", "fewShot")
+        example_img  = os.path.join(few_shot_dir, "oldBaldyFire_grid.png")
         example_grid = self.add_overlay_grid(example_img)
-        example_b64 = self.encode_image_to_base64(example_grid)
+        example_b64  = self.encode_image_to_base64(example_grid)
         example_data_url = f"data:image/png;base64,{example_b64}"
 
-        #few-shot JSON
-        example_json_path = "data/fewShot/few-shot.json"
+        example_json_path = os.path.join(few_shot_dir, "few-shot.json")
         with open(example_json_path, "r") as f:
             example_json = f.read()
+
         
         prompt += "\n\nThe image includes a 20x20 grid overlay labeled A1 to T20. Return 3 hunting spots using those grid labels as 'grid_location'. Format your response as JSON."
 
