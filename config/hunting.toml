@@ -1,0 +1,43 @@
+[elk]
+prompt = """
+Elk are typically found in timbered ridges, and areas near water. Elk can also be found on shelves, which are relatively flat or gently sloping areas situated between steeper sections of terrain and favor ones facing north, north east, and north west. They also like meadows with water close to timber. Look for areas using the provided information to locate the top 3 areas in the map screenshot a hunter should look for elk.
+"""
+
+[black_bear]
+prompt = """
+Black Bears prefer thick brushy areas, berry patches, and sunny slopes in the spring.
+Locate the top 3 areas in the onx map screenshot a hunter should look for black bears.
+"""
+
+[mule_deer]
+prompt = """
+Mule Deer often bed in shaded areas during the day and move to open areas at dusk/dawn.
+Focus on benches, coulees, and transition zones. Locate the top 3 areas in the onx map screenshot a hunter should look for mule deer.
+"""
+
+
+[map_legend]
+yellow = "Bureau of Land Management land"
+green = "National Forest land"
+orange_border = "Private land"
+blue = "Water features"
+purple = "Motorized roads"
+neon_blue = "Hunter travelled route"
+black_dashed_lines = "Motor vehicle trails"
+
+[states]
+MT = "Montana"
+CO = "Colorado"
+WY = "Wyoming"
+ID = "Idaho"
+UT = "Utah"
+AZ = "Arizona"
+NM = "New Mexico"
+NV = "Nevada"
+OR = "Oregon"
+WA = "Washington"
+
+[map_coordinates]
+[map_coordinates.oldBaldyFire]
+top_left = [45.5689, -112.18481]
+bottom_right = [45.5464, -112.14111]

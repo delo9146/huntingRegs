@@ -1,0 +1,16 @@
+{
+  "hunting_spots": [
+    {
+      "description": "Point 1 is located on a North Facing slope and is close to a water source. The area is not very steep based on the wider topograhical contours. The point is an open area with heavily timbered, steep terrain which Elk favor. The large south-facing slope on the other side of the river would provide great glassing opportunities.",
+      "grid_location": "B13"
+    },
+    {
+      "description": "Point 2 is located in grid B7 which is close to a pass which connects a North facing slope to a South facing slope which can be great for wildlife transition zones. This point is at 8600 feet which is a great elevation to find Elk in the month you are hunting. Below the point to the South, there is ample water as provided by the river. From this position, you could glass the opposing North Facing slopes for game although they appear heavily timbered. ",
+      "grid_location": "B7"
+    },
+    {
+      "description": "Point 3 is located on a South Facing slope in a drainage with no roads leading to it which can help Elk get away from people. On the other side of the ridge above point 3 is a North Facing slope which is heavily timbered and provides good bedding Elk. Point 3 is also close to a relativley flat area just to the Southeast which may see high Elk traffic. Because this is a South facing slope, it could be a good idea to sit on the opposing North facing slope and glass this area before hiking into it.",
+      "grid_location": "L10"
+    }
+  ]
+}
