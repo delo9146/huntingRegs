@@ -149,24 +149,48 @@ def show_unit_demo_ui():
 
 def show_hunting_areas_ui():
     # Back button
-    st.button("⬅️ Back to Home", on_click=lambda: st.session_state.pop("page", None))
+    st.button(
+        "⬅️ Back to Home",
+        key="ha_back_home",
+        on_click=lambda: st.session_state.pop("page", None),
+    )
     st.title("🗺️ Hunting Areas")
 
-    # 1) Build path to your HuntingAreas input folder
-    input_dir = os.path.join(
-        os.path.dirname(__file__),
-        "huntingAreas",   # your folder name
-        "data",
-        "input"
+    # 1) Let user choose species, state, and month *before* analyzing
+    species = st.selectbox(
+        "Species",
+        ["elk", "black_bear", "mule_deer"],
+        index=0,
+        key="ha_species",
     )
-    if not os.path.isdir(input_dir):
-        st.error(f"Input folder not found:\n`{input_dir}`")
-        return
+    state = st.selectbox(
+        "State",
+        ["MT", "CO", "WY"],
+        index=0,
+        key="ha_state",
+    )
+    month = st.selectbox(
+        "Month",
+        [
+            "September", "October", "November",
+            "December", "January", "February"
+        ],
+        index=0,
+        key="ha_month",
+    )
 
-    # 2) Let user pick one of the map images
-    image_files = sorted(f for f in os.listdir(input_dir)
-                         if f.lower().endswith((".png", ".jpg", ".jpeg")))
-    selected = st.selectbox("Select a map image", ["--"] + image_files)
+    # 2) Map image selector
+    base = os.path.dirname(__file__)
+    input_dir = os.path.join(base, "huntingAreas", "data", "input")
+    image_files = sorted(
+        f for f in os.listdir(input_dir)
+        if f.lower().endswith((".png", ".jpg", ".jpeg"))
+    )
+    selected = st.selectbox(
+        "Select a map image",
+        ["--"] + image_files,
+        key="ha_image_select",
+    )
     if selected == "--":
         return
 
@@ -174,25 +198,37 @@ def show_hunting_areas_ui():
     st.subheader("Original Map")
     st.image(image_path, use_container_width=True)
 
-    # 3) Analyze when clicked
-    if st.button("Analyze Map"):
+    # 3) Analyze only when user clicks
+    if st.button("Analyze Map", key="ha_run_analyze"):
         with st.spinner("Running analysis…"):
-            # load the prompt template for this species
             cfg_h = HuntingConfigManager()
-            species_key = "elk"
-            prompt_tmpl = cfg_h.load_species_prompt(species_key)
+            # Build the exact same full_prompt as in CLI
+            base_prompt     = cfg_h.load_species_prompt(species)
+            legend_info     = cfg_h.get_map_legend_description()
+            full_state_name = cfg_h.get_full_state_name(state)
+            schema_prompt   = cfg_h.get_response_schema()
+            top_left, bottom_right = cfg_h.get_map_coordinates(image_path)
+            gps_context = (
+                f"The top-left corner of the image corresponds to latitude {top_left[0]:.6f}, "
+                f"longitude {top_left[1]:.6f}; and the bottom-right corner corresponds to "
+                f"latitude {bottom_right[0]:.6f}, longitude {bottom_right[1]:.6f}.\n\n"
+            )
+            full_prompt = (
+                f"You are analyzing a hunting map for the state of {full_state_name} during the month of {month}.\n\n"
+                f"{gps_context}"
+                f"{base_prompt.strip()}\n\n"
+                f"{legend_info.strip()}\n\n"
+                f"{schema_prompt.strip()}"
+            )
 
-            # run GPT-4o vision + text
             analyzer = ImageAnalysisManager()
-            reasoning = analyzer.analyze_image(image_path, prompt_tmpl)
-
-            # draw the waypoints on the original
+            reasoning = analyzer.analyze_image(image_path, full_prompt)
             out_path, parsed = WaypointDrawer.draw_waypoints(image_path, reasoning)
 
-        # 4) Display results
         st.subheader("Annotated Map")
         st.image(out_path, use_container_width=True)
 
         st.subheader("Model Reasoning")
         st.code(reasoning)
+
 
