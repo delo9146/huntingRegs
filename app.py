@@ -9,6 +9,7 @@ if "page" not in st.session_state:
 
     st.button("🎯 Hunting Regulations", on_click=lambda: st.session_state.__setitem__("page", "regs"))
     st.button("📍 Species / Unit Demo", on_click=lambda: st.session_state.__setitem__("page", "demo"))
+    st.button("🗺️ Hunting Areas", on_click=lambda: st.session_state.__setitem__("page", "areas"))
 
     if "page" not in st.session_state:
         st.stop()
@@ -17,3 +18,14 @@ if st.session_state.page == "regs":
     show_regulations_ui()
 elif st.session_state.page == "demo":
     show_unit_demo_ui()
+elif st.session_state.page == "areas":
+    st.button(
+        "⬅️ Back to Home",
+        on_click=lambda: st.session_state.pop("page", None)
+    )
+    st.header("🗺️ Hunting Areas – Coming Soon")
+    st.write(
+        """
+        This feature is under construction.
+        """
+    )
