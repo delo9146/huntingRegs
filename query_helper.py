@@ -28,7 +28,7 @@ def run_query_return(state: str, species: str, prompt: str = None, inject_chunks
         for section_name, section_template in templates.items():
             chunk = section_chunks.get(section_name)
             if chunk:
-                enriched = f"{section_template.strip()}\n\nRetrieved Context:\n{chunk.strip()}"
+                enriched = f"{section_template.strip()}\n\nReference the excerpt below, which was retrieved by OpenAI’s Retrieval API using a section-specific query. This result complements the current file search to help you generate an accurate and detailed summary for this section.\n{chunk.strip()}"
             else:
                 enriched = section_template.strip()
             prompt_parts.append(enriched)
