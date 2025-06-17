@@ -26,10 +26,6 @@ class ConfigManager:
         return self._config["openai"]["api_key_env"]
 
     @property
-    def assistant_name(self) -> str:
-        return self._config["assistant"]["name"]
-
-    @property
     def vector_store_name(self) -> str:
         return self._config["assistant"]["vector_store_name"]
 

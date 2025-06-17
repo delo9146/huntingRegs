@@ -12,28 +12,7 @@ class AssistantManager:
             raise ValueError(f"No API key found in env var {config.api_key_env}")
         self.client = OpenAI(api_key=api_key)
         self.config = config
-        self.assistant = None
         self.vector_store = None
-
-    def get_or_create_assistant(self, name: str = "RegulationsSummarizer"):
-        for a in self.client.beta.assistants.list().data:
-            if a.name == name:
-                self.assistant = a
-                return a
-        return self.create_assistant(name)
-
-    def create_assistant(self, name: str = "RegulationsSummarizer"):
-        assistant = self.client.beta.assistants.create(
-            name=name,
-            instructions=(
-                "You have access to uploaded hunting regulations PDFs. "
-                "When asked, read the files via File Search and provide concise summaries."
-            ),
-            model=self.config.model_name,
-            tools=[{"type": "file_search"}],
-        )
-        self.assistant = assistant
-        return assistant
 
     def get_or_create_vector_store(self, name: str = "regs-store"):
         for vs in self.client.vector_stores.list().data:
@@ -106,17 +85,3 @@ class AssistantManager:
             )
 
         return None
-
-
-
-    def update_assistant(self):
-        if not self.assistant or not self.vector_store:
-            raise ValueError("Assistant or vector store not initialized.")
-        print("Updating assistant with vector store:", self.vector_store.id)
-        self.client.beta.assistants.update(
-            self.assistant.id,
-            tool_resources={
-                "file_search": {"vector_store_ids": [self.vector_store.id]}
-            }
-        )
-        print("Assistant updated successfully.")

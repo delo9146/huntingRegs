@@ -14,17 +14,11 @@ def run_ingest():
     vs = am.get_or_create_vector_store()
     print(f"Vector store ready (id={vs.id})")
 
-    assistant = am.get_or_create_assistant(cfg.assistant_name)
-    print(f"Assistant ready (id={assistant.id})")
-
     state_pdfs = get_all_state_pdfs(cfg.input_dir)
     for state_folder, pdf_path in state_pdfs:
         species = extract_species_from_filename(os.path.basename(pdf_path), valid_species)
         print(f"Ingesting {pdf_path} for state {state_folder} with species {species}")
         am.ingest_file(pdf_path, state=state_folder, species=species)
-
-    am.update_assistant()
-    print("Assistant updated with all ingested documents.")
 
 
 
