@@ -1,5 +1,3 @@
-# huntingAreasGIS/fetch_dem.py
-
 import rasterio
 from rasterio.windows import from_bounds
 from pystac_client import Client
