@@ -148,7 +148,6 @@ def show_unit_demo_ui():
 
 
 def show_hunting_areas_ui():
-    # Back button
     st.button(
         "⬅️ Back to Home",
         key="ha_back_home",
@@ -156,7 +155,6 @@ def show_hunting_areas_ui():
     )
     st.title("🗺️ Hunting Areas")
 
-    # 1) Let user choose species, state, and month *before* analyzing
     species = st.selectbox(
         "Species",
         ["elk", "black_bear", "mule_deer"],
@@ -179,7 +177,6 @@ def show_hunting_areas_ui():
         key="ha_month",
     )
 
-    # 2) Map image selector
     base = os.path.dirname(__file__)
     input_dir = os.path.join(base, "huntingAreas", "data", "input")
     image_files = sorted(
@@ -198,11 +195,9 @@ def show_hunting_areas_ui():
     st.subheader("Original Map")
     st.image(image_path, use_container_width=True)
 
-    # 3) Analyze only when user clicks
     if st.button("Analyze Map", key="ha_run_analyze"):
         with st.spinner("Running analysis…"):
             cfg_h = HuntingConfigManager()
-            # Build the exact same full_prompt as in CLI
             base_prompt     = cfg_h.load_species_prompt(species)
             legend_info     = cfg_h.get_map_legend_description()
             full_state_name = cfg_h.get_full_state_name(state)
