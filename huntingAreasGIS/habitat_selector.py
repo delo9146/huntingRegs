@@ -47,7 +47,7 @@ For our target species (elk in October), ideal habitat parameters are:
 
 Select the top 3 tiles that best match these criteria. For each selected tile, provide:
 1. The tile ID
-2. A brief rationale referencing its key metric values
+2. A detailed rationale referencing its key metric values and why this tile would be a superior option
 
 Here is the JSON data (with values rounded to 5 decimal places):
 {json.dumps(stats, indent=2)}
