@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-habitat_selector.py: Query OpenAI Responses API (gpt-4o) to select top 3 elk habitat grid tiles
+habitat_selector.py: Query OpenAI Responses API (gpt-4o) to select top 3 elk habitat grid tiles with rounded metrics
 """
 import os
 import json
 from dotenv import load_dotenv
 from openai import OpenAI
+
 
 def main():
     # Load environment variables (expects OPENAI_API_KEY in .env)
@@ -16,6 +17,12 @@ def main():
     stats_file = os.path.join("data", "stats.json")
     with open(stats_file, "r") as f:
         stats = json.load(f)
+
+    # Round float metrics to 5 decimal places -- single-decimal values like 70.0 remain unchanged
+    for tile in stats:
+        for k, v in tile.items():
+            if isinstance(v, float):
+                tile[k] = round(v, 5)
 
     # Build the prompt
     prompt = f"""
@@ -42,7 +49,7 @@ Select the top 3 tiles that best match these criteria. For each selected tile, p
 1. The tile ID
 2. A brief rationale referencing its key metric values
 
-Here is the JSON data:
+Here is the JSON data (with values rounded to 5 decimal places):
 {json.dumps(stats, indent=2)}
 """
 
@@ -55,6 +62,7 @@ Here is the JSON data:
     # Output the response
     print("=== Top 3 Elk Habitat Tiles ===")
     print(response.output_text)
+
 
 if __name__ == "__main__":
     main()
