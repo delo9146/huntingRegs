@@ -9,22 +9,18 @@ from openai import OpenAI
 
 
 def main():
-    # Load environment variables (expects OPENAI_API_KEY in .env)
     load_dotenv()
     client = OpenAI()
 
-    # Load grid statistics
     stats_file = os.path.join("data", "stats.json")
     with open(stats_file, "r") as f:
         stats = json.load(f)
 
-    # Round float metrics to 5 decimal places -- single-decimal values like 70.0 remain unchanged
     for tile in stats:
         for k, v in tile.items():
             if isinstance(v, float):
                 tile[k] = round(v, 5)
 
-    # Build the prompt
     prompt = f"""
 You are an expert wildlife habitat analyst. Below is a JSON array of 100 grid tiles covering a hunting area.
 Each tile has the following metrics:
@@ -53,13 +49,11 @@ Here is the JSON data (with values rounded to 5 decimal places):
 {json.dumps(stats, indent=2)}
 """
 
-    # Call the Responses API
     response = client.responses.create(
         model="gpt-4o",
         input=[{"role": "user", "content": prompt}]
     )
 
-    # Output the response
     print("=== Top 3 Elk Habitat Tiles ===")
     print(response.output_text)
 
