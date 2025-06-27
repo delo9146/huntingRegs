@@ -78,7 +78,7 @@ def merge_stats(grid_gdf, raster_map):
     output = []
     for idx, row in grid_gdf.iterrows():
         rec = {"tile": row["tile"],
-               "centroid": [row.geometry.centroid.y, row.geometry.centroid.x]}
+               "centroid": [row.geometry.centroid.x, row.geometry.centroid.y]}
         for path, prefix in raster_map.items():
             stats = stats_data[path][idx]
             for key, value in stats.items():

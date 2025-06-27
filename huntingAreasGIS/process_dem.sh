@@ -20,6 +20,10 @@ gdal_fillnodata.py "${PREFIX}_utm.tif" "${PREFIX}_filled.tif"
 gdaldem slope     "${PREFIX}_filled.tif" "${PREFIX}_slope.tif"     -compute_edges
 gdaldem aspect    "${PREFIX}_filled.tif" "${PREFIX}_aspect.tif"
 gdaldem hillshade "${PREFIX}_filled.tif" "${PREFIX}_hillshade.tif" -az 315 -alt 45
+gdaldem TPI       "${PREFIX}_filled.tif"   "${PREFIX}_tpi.tif"
+gdaldem roughness "${PREFIX}_filled.tif" "${PREFIX}_roughness.tif"
+gdaldem TRI       "${PREFIX}_filled.tif" "${PREFIX}_tri.tif"
+
 
 # 4. Convert all outputs to Cloud-Optimized GeoTIFFs (COGs)
 for file in ${PREFIX}_*.tif; do
@@ -37,3 +41,6 @@ echo "  cog_${PREFIX}_filled.tif"
 echo "  cog_${PREFIX}_slope.tif"
 echo "  cog_${PREFIX}_aspect.tif"
 echo "  cog_${PREFIX}_hillshade.tif"
+echo "  cog_${PREFIX}_tpi.tif"
+echo "  cog_${PREFIX}_roughness.tif"
+echo "  cog_${PREFIX}_tri.tif"
