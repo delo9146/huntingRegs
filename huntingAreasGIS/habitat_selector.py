@@ -41,7 +41,7 @@ For our target species (elk in October), ideal habitat parameters are:
 - Roughness: 1.0–3.0
 - TRI: 1.0–4.0
 
-Select the top 3 tiles that best match these criteria. For each selected tile, provide:
+Select the top 3 tiles that best match these criteria. Ideally, it's preferable for more parameters to be met for individual tiles. For each selected tile, provide:
 1. The tile ID
 2. A detailed rationale referencing its key metric values and why this tile would be a superior option
 
