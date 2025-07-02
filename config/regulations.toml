@@ -9,7 +9,6 @@ model_name = "gpt-4o"
 api_key_env = "OPENAI_API_KEY"
 
 [assistant]
-name = "RegulationsSummarizer"
 vector_store_name = "regs-store"
 
 [species]
@@ -32,14 +31,6 @@ valid = [
 
 [sources_by_state]
 montana = [ "https://fwp.mt.gov/hunt/regulations" ]
-colorado = [
-  "https://cpw.state.co.us/hunting/big-game",
-  "https://cpw.state.co.us/hunting/small-game",
-  "https://cpw.state.co.us/hunting/waterfowl",
-  "https://cpw.state.co.us/hunting/turkey",
-  "https://cpw.state.co.us/hunting/mountain-lion",
-  "https://cpw.state.co.us/hunting/furbearers",
-]
 
 
 [units.Montana]
