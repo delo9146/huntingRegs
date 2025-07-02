@@ -52,9 +52,6 @@ class ConfigManager:
         return self._config.get("prompts_by_state", {}).get(state, {}).get("summary", self.summary_prompt)
     
     def sectional_queries_for(self, state: str) -> dict:
-        """
-        Return a dictionary of section name → query string for the given state.
-        """
         return self._config.get("sectional_queries_by_state", {}).get(state, {})
     
     def summary_intro_for(self, state: str) -> str:
@@ -65,6 +62,20 @@ class ConfigManager:
 
     def section_templates_for(self, state: str) -> dict:
         return self._config.get("section_templates_by_state", {}).get(state, {})
+    
+    @property
+    def sources_by_state(self) -> dict[str, list[str]]:
+        raw = self._config.get("sources_by_state", {})
+        normalized: dict[str, list[str]] = {}
+        for state, urls in raw.items():
+            if isinstance(urls, str):
+                normalized[state] = [urls]
+            elif isinstance(urls, list):
+                normalized[state] = urls
+            else:
+                raise ValueError(f"Invalid URL entry for state {state!r}: {urls!r}")
+        return normalized
+
 
 
 

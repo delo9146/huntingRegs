@@ -50,7 +50,6 @@ def compute_stats_for_raster(raster_path, grid_gdf, nodata_val=None):
             try:
                 data, _ = mask(src, [row.geometry], crop=True, nodata=nodata)
                 arr = data[0]
-                # Filter out nodata or NaNs
                 if nodata is not None:
                     arr = arr[arr != nodata]
                 arr = arr[~np.isnan(arr)]
@@ -70,7 +69,6 @@ def merge_stats(grid_gdf, raster_map):
     Compute and merge statistics for multiple rasters into a single records list.
     raster_map: dict of { raster_path: prefix }
     """
-    # Determine nodata for each raster and compute stats
     stats_data = {}
     for path in raster_map:
         stats_data[path] = compute_stats_for_raster(path, grid_gdf)
@@ -113,7 +111,6 @@ def parse_args():
 def main():
     args = parse_args()
 
-    # Parse rasters entries into a map of path->prefix
     raster_map = {}
     for entry in args.rasters:
         path, prefix = entry.split(":", 1) if ":" in entry else (entry, None)
@@ -121,7 +118,6 @@ def main():
             prefix = entry.split("/")[-1].split(".")[0]
         raster_map[path] = prefix
 
-    # Generate fishnet grid from first raster's bounds
     first_raster = next(iter(raster_map))
     bounds, crs = get_raster_bounds(first_raster)
     nx, ny = args.grid_size
@@ -129,7 +125,6 @@ def main():
     grid.to_file(args.grid_out, driver="GeoJSON")
     print(f"Saved grid ({len(grid)} tiles) → {args.grid_out}")
 
-    # Compute and merge stats
     records = merge_stats(grid, raster_map)
     with open(args.stats_out, "w") as f:
         json.dump(records, f, indent=2)
