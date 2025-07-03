@@ -8,7 +8,7 @@ def main():
     cfg = ConfigManager()
     sm = SourceManager(cfg)
 
-    state = "montana"
+    state = "colorado"
     print(f"🔄 Starting web ingestion for '{state}'...")
 
     # Download all linked PDFs for Montana
