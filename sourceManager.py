@@ -1,5 +1,6 @@
 # sourceManager.py
 import os
+import re
 import time
 import requests
 from bs4 import BeautifulSoup
@@ -64,9 +65,12 @@ class SourceManager:
         Turn e.g. '2025-deer-elk-antelope-regulations-final.pdf'
         into 'dea.pdf', etc.
         """
-        slug, ext = os.path.splitext(orig_fname.lower())
-        for long_name, code in self._NAME_MAP.items():
-            if long_name in slug:
-                return f"{code}{ext}"
-        # no match → leave original
+        base, ext = os.path.splitext(orig_fname)             
+        lower = base.lower()                                 
+
+        for code, long_slug in self._NAME_MAP.items():
+            if code in lower:
+                pattern = re.compile(re.escape(code), re.IGNORECASE)
+                new_base = pattern.sub(long_slug, base)
+                return new_base + ext
         return orig_fname

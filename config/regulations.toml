@@ -24,9 +24,12 @@ valid = [
   "bison",
   "mountain-lion",
   "wolf",
+  "furbearer",
   "turkey",
   "goose",
-  "migratory-bird"
+  "migratory-bird",
+  "upland-game-bird",
+  "lion"
 ]
 
 [sources_by_state]
