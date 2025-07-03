@@ -32,8 +32,9 @@ class SourceManager:
                 if not pdf_url.startswith("http"):
                     pdf_url = requests.compat.urljoin(page_url, pdf_url)
 
-                fname = os.path.basename(pdf_url)
-                local_path = os.path.join(state_dir, fname)
+                orig = os.path.basename(pdf_url)
+                new_name = self._normalize_filename(orig)
+                local_path = os.path.join(state_dir, new_name)
 
                 # check Last-Modified header vs. local file mtime
                 head = requests.head(pdf_url, allow_redirects=True)
@@ -41,7 +42,7 @@ class SourceManager:
                 local_mod = time.ctime(os.path.getmtime(local_path)) if os.path.exists(local_path) else None
 
                 if (not os.path.exists(local_path)) or (remote_mod and remote_mod != local_mod):
-                    print(f"↓ Fetching {state}/{fname}")
+                    print(f"↓ Fetching {state}/{new_name}")
                     data = requests.get(pdf_url).content
                     with open(local_path, "wb") as f:
                         f.write(data)
@@ -49,3 +50,23 @@ class SourceManager:
                         # update local mtime to match remote
                         ts = time.mktime(time.strptime(remote_mod, "%a, %d %b %Y %H:%M:%S %Z"))
                         os.utime(local_path, (ts, ts))
+
+    _NAME_MAP = {
+        "dea":      "deer-elk-antelope",
+        "msgb": "moose-sheep-goat-bison",
+        "mig-bird":         "migratory-bird",
+        "upgbrd":       "upland-game-bird",
+        "wolf-and-furbearer":     "wolf-furbearer",
+    }                  
+
+    def _normalize_filename(self, orig_fname: str) -> str:
+        """
+        Turn e.g. '2025-deer-elk-antelope-regulations-final.pdf'
+        into 'dea.pdf', etc.
+        """
+        slug, ext = os.path.splitext(orig_fname.lower())
+        for long_name, code in self._NAME_MAP.items():
+            if long_name in slug:
+                return f"{code}{ext}"
+        # no match → leave original
+        return orig_fname
