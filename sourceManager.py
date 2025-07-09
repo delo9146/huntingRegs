@@ -217,6 +217,28 @@ class SourceManager:
         except requests.RequestException:
             remote_mod = None
 
+        # If we hit an HTML “viewer” page instead of a PDF, chase the real PDF URL
+        ctype = head.headers.get("Content-Type", "")
+        if "text/html" in ctype.lower():
+            # fetch the viewer page
+            resp = self.session.get(pdf_url, timeout=5)
+            resp.raise_for_status()
+            soup = BeautifulSoup(resp.text, "html.parser")
+
+            # 1) try an <iframe> whose src ends in .pdf
+            iframe = soup.find("iframe", src=re.compile(r"\.pdf$", re.I))
+            if iframe:
+                pdf_url = urljoin(pdf_url, iframe["src"])
+            else:
+                # 2) fallback: look for the JS variable window.viewerPdfUrl
+                m = re.search(r"window\.viewerPdfUrl\s*=\s*'([^']+)'", resp.text)
+                if m:
+                    pdf_url = m.group(1)
+
+            # now re-HEAD the real PDF for timestamp checking
+            head       = self.session.head(pdf_url, allow_redirects=True, timeout=5)
+            remote_mod = head.headers.get("Last-Modified")
+
         # ➍ skip if unchanged
         if os.path.exists(dest_path) and remote_mod:
             local_mod = time.ctime(os.path.getmtime(dest_path))
