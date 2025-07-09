@@ -14,7 +14,6 @@ class SourceManager:
     def __init__(self, cfg: ConfigManager):
         self.cfg     = cfg
         self.fm      = FileManager(cfg.input_dir, cfg.output_dir)
-        # browser‐like session to avoid 403s
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": (
@@ -34,7 +33,6 @@ class SourceManager:
             """
             pass
 
-    # Map short code → full slug
     _NAME_MAP = {
         "dea":                "deer-elk-antelope",
         "msgb":               "moose-sheep-goat-bison",
@@ -82,7 +80,6 @@ class SourceManager:
         resp.raise_for_status()
         soup = BeautifulSoup(resp.text, "html.parser")
 
-        # 1) Find all 'Download' links anywhere on the page
         download_links = soup.find_all("a", string=re.compile(r"download", re.I))
         candidates = set()
         for a in download_links:
@@ -90,8 +87,6 @@ class SourceManager:
             if href:
                 candidates.add(urljoin(base_url, href))
 
-        # 2) Filter for only W-chapter PDF URLs
-        #    Match filenames like 'chapter-w-02-…' or 'ch02.pdf'
         pat = re.compile(r'^(?:chapter-w-(\d{1,2})|ch(\d{1,2}))', re.IGNORECASE)
         numbered = []
         for url in candidates:
@@ -102,14 +97,12 @@ class SourceManager:
             chap_num = int(m.group(1) or m.group(2))
             numbered.append((chap_num, url))
 
-        # 3) Sort by chapter number
         numbered.sort(key=lambda x: x[0])
 
         logging.info("Colorado: found %d chapter PDFs", len(numbered))
         if not numbered:
             logging.warning("Colorado: no W-chapter PDFs found!")
 
-        # 4) Download in order
         if not numbered:
             print("  • No W-chapter PDFs found!")
         for num, pdf_url in numbered:
@@ -131,7 +124,6 @@ class SourceManager:
 
         soup = BeautifulSoup(resp.text, "html.parser")
 
-        # 1) find every <a href="...pdf">
         pdf_links = soup.find_all("a", href=re.compile(r"\.pdf$", re.I))
         if not pdf_links:
             print("  • No PDF links found on Montana hub page")
@@ -140,7 +132,6 @@ class SourceManager:
         if not pdf_links:
             logging.warning("Montana: no PDFs found on hub page")
 
-        # 2) download each one
         for a in pdf_links:
             href    = a["href"]
             pdf_url = urljoin(base_url, href)
@@ -150,18 +141,15 @@ class SourceManager:
         """
         Normalize, check Last-Modified, and download a PDF into data/input/<state>.
         """
-        # ➊ normalize the filename
         orig      = os.path.basename(pdf_url.split("?")[0])
         new_name  = self._normalize_filename(orig)
 
-        # ➋ ensure the state directory exists
         dest_dir  = os.path.join(self.fm.input_dir, state)
         os.makedirs(dest_dir, exist_ok=True)
         dest_path = os.path.join(dest_dir, new_name)
 
         self.on_event("download_start", state=state, url=pdf_url)
 
-        # ➌ HEAD for Last-Modified
         try:
             head = self.session.head(pdf_url, allow_redirects=True, timeout=5)
             remote_mod = head.headers.get("Last-Modified")
@@ -171,7 +159,6 @@ class SourceManager:
             self.on_event("download_error", state=state, url=pdf_url, error=str(e))
             return
 
-        # If we hit an HTML “viewer” page instead of a PDF, chase the real PDF URL
         ctype = head.headers.get("Content-Type", "")
         if "text/html" in ctype.lower():
             logging.debug("Chasing HTML viewer page for %s", pdf_url)
@@ -185,33 +172,27 @@ class SourceManager:
 
             soup = BeautifulSoup(resp.text, "html.parser")
 
-            # 1) try an <iframe> whose src ends in .pdf
             iframe = soup.find("iframe", src=re.compile(r"\.pdf$", re.I))
             if iframe:
                 pdf_url = urljoin(pdf_url, iframe["src"])
             else:
-                # 2) fallback: look for the JS variable window.viewerPdfUrl
                 m = re.search(r"window\.viewerPdfUrl\s*=\s*'([^']+)'", resp.text)
                 if m:
                     pdf_url = m.group(1)
 
-            # now re-HEAD the real PDF for timestamp checking
             head       = self.session.head(pdf_url, allow_redirects=True, timeout=5)
             remote_mod = head.headers.get("Last-Modified")
 
-        # ➍ skip if unchanged
         if os.path.exists(dest_path) and remote_mod:
             local_mod = time.ctime(os.path.getmtime(dest_path))
             if local_mod == remote_mod:
                 return
 
-        # ➎ fetch & write
         logging.debug("GET %s", pdf_url)
         try:
             data = self.session.get(pdf_url, timeout=10).content
             with open(dest_path, "wb") as f:
                 f.write(data)
-            # preserve remote timestamp
             if remote_mod:
                 ts = time.mktime(time.strptime(remote_mod, "%a, %d %b %Y %H:%M:%S %Z"))
                 os.utime(dest_path, (ts, ts))
