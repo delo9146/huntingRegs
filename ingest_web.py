@@ -11,7 +11,6 @@ def main():
     state = "colorado"
     print(f"🔄 Starting web ingestion for '{state}'...")
 
-    # Download all linked PDFs for Montana
     sm.fetch_state_pdfs(state)
 
     print(f"✅ Web ingestion for '{state}' completed.")

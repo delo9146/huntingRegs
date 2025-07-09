@@ -104,10 +104,11 @@ class SourceManager:
         return pdf_urls
 
     def fetch_state_pdfs(self, state: str):
+        if state.lower() == "colorado":
+            return self._fetch_colorado_rules()
         urls      = self.cfg.sources_by_state.get(state, [])
         state_dir = os.path.join(self.fm.input_dir, state)
         os.makedirs(state_dir, exist_ok=True)
-
         for page_url in urls:
             print(f"🔍 Scanning {page_url}")
             try:
@@ -124,9 +125,7 @@ class SourceManager:
                 print(f"  • No English PDFs found on {page_url}")
 
             for pdf_url in pdf_urls:
-                orig       = os.path.basename(pdf_url.split("?")[0])
-                new_name   = self._normalize_filename(orig)
-                local_path = os.path.join(state_dir, new_name)
+                self._download_pdf(state, pdf_url)
 
                 # check Last-Modified
                 try:
@@ -154,3 +153,85 @@ class SourceManager:
                             os.utime(local_path, (ts, ts))
                     except requests.RequestException as e:
                         print(f"  ! Download failed for {pdf_url}: {e}")
+
+    def _fetch_colorado_rules(self):
+        """
+        Download every Chapter W-XX PDF under 'Wildlife Regulations',
+        in numeric order, skipping all non-W chapters.
+        """
+        base_url = self.cfg.sources_by_state["colorado"][0]
+        print(f"🔍 Scanning Colorado regulations hub: {base_url}")
+        resp = self.session.get(base_url, timeout=10)
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.text, "html.parser")
+
+        # 1) Find all 'Download' links anywhere on the page
+        download_links = soup.find_all("a", string=re.compile(r"download", re.I))
+        candidates = set()
+        for a in download_links:
+            href = a.get("href")
+            if href:
+                candidates.add(urljoin(base_url, href))
+
+        # 2) Filter for only W-chapter PDF URLs
+        #    Match filenames like 'chapter-w-02-…' or 'ch02.pdf'
+        pat = re.compile(r'^(?:chapter-w-(\d{1,2})|ch(\d{1,2}))', re.IGNORECASE)
+        numbered = []
+        for url in candidates:
+            fname = os.path.basename(url).split("?")[0].lower()
+            m = pat.match(fname)
+            if not m:
+                continue
+            chap_num = int(m.group(1) or m.group(2))
+            numbered.append((chap_num, url))
+
+        # 3) Sort by chapter number
+        numbered.sort(key=lambda x: x[0])
+
+        # 4) Download in order
+        if not numbered:
+            print("  • No W-chapter PDFs found!")
+        for num, pdf_url in numbered:
+            self._download_pdf("colorado", pdf_url)
+
+
+
+
+    def _download_pdf(self, state: str, pdf_url: str):
+        """
+        Normalize, check Last-Modified, and download a PDF into data/input/<state>.
+        """
+        # ➊ normalize the filename
+        orig      = os.path.basename(pdf_url.split("?")[0])
+        new_name  = self._normalize_filename(orig)
+
+        # ➋ ensure the state directory exists
+        dest_dir  = os.path.join(self.fm.input_dir, state)
+        os.makedirs(dest_dir, exist_ok=True)
+        dest_path = os.path.join(dest_dir, new_name)
+
+        # ➌ HEAD for Last-Modified
+        try:
+            head       = self.session.head(pdf_url, allow_redirects=True, timeout=5)
+            remote_mod = head.headers.get("Last-Modified")
+        except requests.RequestException:
+            remote_mod = None
+
+        # ➍ skip if unchanged
+        if os.path.exists(dest_path) and remote_mod:
+            local_mod = time.ctime(os.path.getmtime(dest_path))
+            if local_mod == remote_mod:
+                return
+
+        # ➎ fetch & write
+        print(f"↓ Fetching {state}/{new_name}")
+        try:
+            data = self.session.get(pdf_url, timeout=10).content
+            with open(dest_path, "wb") as f:
+                f.write(data)
+            # ➏ set mtime to remote_mod for future diffs
+            if remote_mod:
+                ts = time.mktime(time.strptime(remote_mod, "%a, %d %b %Y %H:%M:%S %Z"))
+                os.utime(dest_path, (ts, ts))
+        except requests.RequestException as e:
+            print(f"  ! Download failed for {pdf_url}: {e}")

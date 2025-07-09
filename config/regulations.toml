@@ -34,14 +34,7 @@ valid = [
 
 [sources_by_state]
 montana = [ "https://fwp.mt.gov/hunt/regulations" ]
-colorado = [
-  "https://cpw.state.co.us/hunting/big-game",
-  "https://cpw.state.co.us/hunting/small-game",
-  "https://cpw.state.co.us/hunting/waterfowl",
-  "https://cpw.state.co.us/hunting/turkey",
-  "https://cpw.state.co.us/hunting/mountain-lion",
-  "https://cpw.state.co.us/hunting/furbearers",
-]
+colorado = [ "https://cpw.state.co.us/rules-and-regulations" ]
 
 
 [units.Montana]
