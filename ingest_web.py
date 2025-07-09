@@ -2,17 +2,22 @@
 
 from configManager import ConfigManager
 from sourceManager import SourceManager
+import logging
 
 def main():
-    # Load config and init scraper
+    logging.basicConfig(level=logging.INFO)  # or DEBUG for more detail
+
     cfg = ConfigManager()
     sm  = SourceManager(cfg)
 
-    # Loop over every state in regulations.toml → sources_by_state
     for state in cfg.sources_by_state.keys():
-        print(f"🔄 Starting web ingestion for '{state}'...")
-        sm.fetch_state_pdfs(state)
-        print(f"✅ Web ingestion for '{state}' completed.\n")
+        logging.info("Starting ingestion for %s", state)
+        try:
+            sm.fetch_state_pdfs(state)
+        except Exception as e:
+            logging.exception("Failed to ingest %s", state)
+        else:
+            logging.info("Completed ingestion for %s", state)
 
 if __name__ == "__main__":
     main()

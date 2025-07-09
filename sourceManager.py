@@ -6,6 +6,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+import logging
 from configManager import ConfigManager
 from fileManager import FileManager
 
@@ -23,6 +24,15 @@ class SourceManager:
             ),
             "Accept-Language": "en-US,en;q=0.9",
         })
+
+    def on_event(self, name: str, **ctx):
+            """
+            Hook for external listeners. Override in subclasses to handle:
+            - download_start
+            - download_success
+            - download_error
+            """
+            pass
 
     # Map short code → full slug
     _NAME_MAP = {
@@ -50,18 +60,15 @@ class SourceManager:
         return base + ext
 
     def fetch_state_pdfs(self, state: str):
-        """
-        Dispatch to a state-specific scraper function.
-        Remove the old generic-hub fallback entirely.
-        """
+        logging.debug("fetch_state_pdfs(%r) called", state)
         state_lower = state.lower()
         if state_lower == "colorado":
             return self._fetch_colorado_rules()
         if state_lower == "montana":
             return self._fetch_montana_rules()
 
-        raise ValueError(f"No download routine for state '{state}'. "
-                         "Please add a _fetch_{state_lower}_rules() method.")
+        logging.error("No routine for state %r", state)
+        raise ValueError(f"No download routine for state '{state}'")
 
 
     def _fetch_colorado_rules(self):
@@ -98,6 +105,10 @@ class SourceManager:
         # 3) Sort by chapter number
         numbered.sort(key=lambda x: x[0])
 
+        logging.info("Colorado: found %d chapter PDFs", len(numbered))
+        if not numbered:
+            logging.warning("Colorado: no W-chapter PDFs found!")
+
         # 4) Download in order
         if not numbered:
             print("  • No W-chapter PDFs found!")
@@ -125,6 +136,10 @@ class SourceManager:
         if not pdf_links:
             print("  • No PDF links found on Montana hub page")
 
+        logging.info("Montana: found %d PDF links", len(pdf_links))
+        if not pdf_links:
+            logging.warning("Montana: no PDFs found on hub page")
+
         # 2) download each one
         for a in pdf_links:
             href    = a["href"]
@@ -144,19 +159,30 @@ class SourceManager:
         os.makedirs(dest_dir, exist_ok=True)
         dest_path = os.path.join(dest_dir, new_name)
 
+        self.on_event("download_start", state=state, url=pdf_url)
+
         # ➌ HEAD for Last-Modified
         try:
-            head       = self.session.head(pdf_url, allow_redirects=True, timeout=5)
+            head = self.session.head(pdf_url, allow_redirects=True, timeout=5)
             remote_mod = head.headers.get("Last-Modified")
-        except requests.RequestException:
-            remote_mod = None
+            logging.debug("HEAD %s → %s", pdf_url, head.status_code)
+        except requests.RequestException as e:
+            logging.error("HEAD failed for %s: %s", pdf_url, e)
+            self.on_event("download_error", state=state, url=pdf_url, error=str(e))
+            return
 
         # If we hit an HTML “viewer” page instead of a PDF, chase the real PDF URL
         ctype = head.headers.get("Content-Type", "")
         if "text/html" in ctype.lower():
-            # fetch the viewer page
-            resp = self.session.get(pdf_url, timeout=5)
-            resp.raise_for_status()
+            logging.debug("Chasing HTML viewer page for %s", pdf_url)
+            try:
+                resp = self.session.get(pdf_url, timeout=5)
+                resp.raise_for_status()
+            except Exception as e:
+                logging.error("Failed to fetch viewer HTML for %s: %s", pdf_url, e)
+                self.on_event("download_error", state=state, url=pdf_url, error=str(e))
+                return
+
             soup = BeautifulSoup(resp.text, "html.parser")
 
             # 1) try an <iframe> whose src ends in .pdf
@@ -180,14 +206,28 @@ class SourceManager:
                 return
 
         # ➎ fetch & write
-        print(f"↓ Fetching {state}/{new_name}")
+        logging.debug("GET %s", pdf_url)
         try:
             data = self.session.get(pdf_url, timeout=10).content
             with open(dest_path, "wb") as f:
                 f.write(data)
-            # ➏ set mtime to remote_mod for future diffs
+            # preserve remote timestamp
             if remote_mod:
                 ts = time.mktime(time.strptime(remote_mod, "%a, %d %b %Y %H:%M:%S %Z"))
                 os.utime(dest_path, (ts, ts))
+
+            logging.info("Saved %s", dest_path)
+            self.on_event(
+                "download_success",
+                state=state,
+                url=pdf_url,
+                path=dest_path,
+            )
         except requests.RequestException as e:
-            print(f"  ! Download failed for {pdf_url}: {e}")
+            logging.error("Download failed for %s: %s", pdf_url, e)
+            self.on_event(
+                "download_error",
+                state=state,
+                url=pdf_url,
+                error=str(e),
+            )
