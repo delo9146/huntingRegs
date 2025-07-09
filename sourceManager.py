@@ -49,110 +49,20 @@ class SourceManager:
 
         return base + ext
 
-    def _find_pdf_links(self, page_url: str, soup: BeautifulSoup) -> set[str]:
-        """
-        1) From the CPW page, only look at <a> whose text contains
-           'download' or 'brochure' (filters out Spanish 'Descargue').
-        2) And whose href mentions .pdf, widen.net, or widencollective.com.
-        3) HEAD-check for real PDFs or chase the iframe/link in viewer pages.
-        """
-        pdf_urls = set()
-        candidates = []
-
-        for a in soup.find_all("a", href=True):
-            text = a.get_text(strip=True).lower()
-            if not ("download" in text or "brochure" in text):
-                continue
-
-            href = a["href"]
-            if any(tok in href.lower() for tok in [".pdf", "widen.net", "widencollective.com"]):
-                candidates.append(urljoin(page_url, href))
-
-        for link in candidates:
-            try:
-                head = self.session.head(link, allow_redirects=True, timeout=5)
-                ctype = head.headers.get("Content-Type", "")
-            except requests.RequestException:
-                ctype = ""
-
-            # direct PDF?
-            if link.lower().endswith(".pdf") or "application/pdf" in ctype:
-                pdf_urls.add(link)
-                continue
-
-            # chase viewer/share page
-            try:
-                sub = self.session.get(link, timeout=5)
-                sub.raise_for_status()
-                sub_soup = BeautifulSoup(sub.text, "html.parser")
-            except requests.RequestException:
-                continue
-
-            # iframe → PDF
-            iframe = sub_soup.find("iframe", src=True)
-            if iframe and iframe["src"].lower().endswith(".pdf"):
-                pdf_urls.add(urljoin(link, iframe["src"]))
-                continue
-
-            # <link type="application/pdf">
-            link_tag = sub_soup.find("link", {"type": "application/pdf"})
-            if link_tag:
-                href2 = link_tag.get("href", "")
-                if href2.lower().endswith(".pdf"):
-                    pdf_urls.add(urljoin(link, href2))
-
-        return pdf_urls
-
     def fetch_state_pdfs(self, state: str):
-        if state.lower() == "colorado":
+        """
+        Dispatch to a state-specific scraper function.
+        Remove the old generic-hub fallback entirely.
+        """
+        state_lower = state.lower()
+        if state_lower == "colorado":
             return self._fetch_colorado_rules()
-        urls      = self.cfg.sources_by_state.get(state, [])
-        state_dir = os.path.join(self.fm.input_dir, state)
-        os.makedirs(state_dir, exist_ok=True)
-        for page_url in urls:
-            print(f"🔍 Scanning {page_url}")
-            try:
-                resp = self.session.get(page_url, allow_redirects=True, timeout=10)
-                resp.raise_for_status()
-            except requests.RequestException as e:
-                print(f"  ! Failed to fetch {page_url}: {e}")
-                continue
+        if state_lower == "montana":
+            return self._fetch_montana_rules()
 
-            soup     = BeautifulSoup(resp.text, "html.parser")
-            pdf_urls = self._find_pdf_links(page_url, soup)
+        raise ValueError(f"No download routine for state '{state}'. "
+                         "Please add a _fetch_{state_lower}_rules() method.")
 
-            if not pdf_urls:
-                print(f"  • No English PDFs found on {page_url}")
-
-            for pdf_url in pdf_urls:
-                self._download_pdf(state, pdf_url)
-
-                # check Last-Modified
-                try:
-                    head       = self.session.head(pdf_url, allow_redirects=True, timeout=5)
-                    remote_mod = head.headers.get("Last-Modified")
-                except:
-                    remote_mod = None
-
-                local_mod = (
-                    time.ctime(os.path.getmtime(local_path))
-                    if os.path.exists(local_path)
-                    else None
-                )
-
-                if not os.path.exists(local_path) or (remote_mod and remote_mod != local_mod):
-                    print(f"↓ Fetching {state}/{new_name}")
-                    try:
-                        data = self.session.get(pdf_url, timeout=10).content
-                        with open(local_path, "wb") as f:
-                            f.write(data)
-                        if remote_mod:
-                            ts = time.mktime(time.strptime(
-                                remote_mod, "%a, %d %b %Y %H:%M:%S %Z"
-                            ))
-                            os.utime(local_path, (ts, ts))
-                    except requests.RequestException as e:
-                        print(f"  ! Download failed for {pdf_url}: {e}")
 
     def _fetch_colorado_rules(self):
         """
@@ -194,8 +104,32 @@ class SourceManager:
         for num, pdf_url in numbered:
             self._download_pdf("colorado", pdf_url)
 
+    def _fetch_montana_rules(self):
+        """
+        Download every PDF linked from the Montana regulations hub,
+        including regs, corrections, commissions, etc.
+        """
+        base_url = self.cfg.sources_by_state["montana"][0]
+        print(f"🔍 Scanning Montana regulations hub: {base_url}")
+        try:
+            resp = self.session.get(base_url, timeout=10)
+            resp.raise_for_status()
+        except requests.RequestException as e:
+            print(f"  • Failed to fetch Montana hub page: {e}")
+            return
 
+        soup = BeautifulSoup(resp.text, "html.parser")
 
+        # 1) find every <a href="...pdf">
+        pdf_links = soup.find_all("a", href=re.compile(r"\.pdf$", re.I))
+        if not pdf_links:
+            print("  • No PDF links found on Montana hub page")
+
+        # 2) download each one
+        for a in pdf_links:
+            href    = a["href"]
+            pdf_url = urljoin(base_url, href)
+            self._download_pdf("montana", pdf_url)
 
     def _download_pdf(self, state: str, pdf_url: str):
         """

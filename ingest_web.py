@@ -8,7 +8,7 @@ def main():
     cfg = ConfigManager()
     sm = SourceManager(cfg)
 
-    state = "colorado"
+    state = "montana"
     print(f"🔄 Starting web ingestion for '{state}'...")
 
     sm.fetch_state_pdfs(state)
