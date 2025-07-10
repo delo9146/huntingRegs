@@ -7,7 +7,6 @@ from urllib.parse import urljoin
 import logging
 from configManager import ConfigManager
 from fileManager import FileManager
-from ingest import extract_species_from_filename
 from assistantManager import AssistantManager
 
 class SourceManager:
@@ -25,12 +24,25 @@ class SourceManager:
             "Accept-Language": "en-US,en;q=0.9",
         })
 
+    def extract_species_from_filename(self, filename, valid_species):
+        """
+        Extract all valid species from the filename.
+        Handles multi-word species (like 'black-bear') and ignores case.
+        """
+        filename_lower = filename.lower()
+        matches = []
+        for species in valid_species:
+            pattern = re.escape(species.lower())
+            if re.search(pattern, filename_lower):
+                matches.append(species)
+        return matches
+
     def on_event(self, name: str, **ctx):
         if name == "download_success" and self.am:
             path  = ctx["path"]
             state = ctx.get("state")
 
-            species = extract_species_from_filename(
+            species = self.extract_species_from_filename(
                 os.path.basename(path),
                 self.cfg.valid_species
             )
