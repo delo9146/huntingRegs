@@ -6,13 +6,13 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import logging
 from configManager import ConfigManager
-from fileManager import FileManager
 from assistantManager import AssistantManager
 
 class SourceManager:
     def __init__(self, cfg: ConfigManager, assistant_manager=None):
         self.cfg     = cfg
-        self.fm      = FileManager(cfg.input_dir, cfg.output_dir)
+        self.input_dir = cfg.input_dir
+        self.output_dir = cfg.output_dir
         self.am      = assistant_manager
         self.session = requests.Session()
         self.session.headers.update({
@@ -163,7 +163,7 @@ class SourceManager:
         orig      = os.path.basename(pdf_url.split("?")[0])
         new_name  = self._normalize_filename(orig)
 
-        dest_dir  = os.path.join(self.fm.input_dir, state)
+        dest_dir  = os.path.join(self.input_dir, state)
         os.makedirs(dest_dir, exist_ok=True)
         dest_path = os.path.join(dest_dir, new_name)
 
