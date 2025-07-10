@@ -94,7 +94,7 @@ class SourceManager:
         in numeric order, skipping all non-W chapters.
         """
         base_url = self.cfg.sources_by_state["colorado"][0]
-        print(f"🔍 Scanning Colorado regulations hub: {base_url}")
+        print(f"Scanning Colorado regulations hub: {base_url}")
         resp = self.session.get(base_url, timeout=10)
         resp.raise_for_status()
         soup = BeautifulSoup(resp.text, "html.parser")
@@ -133,7 +133,7 @@ class SourceManager:
         including regs, corrections, commissions, etc.
         """
         base_url = self.cfg.sources_by_state["montana"][0]
-        print(f"🔍 Scanning Montana regulations hub: {base_url}")
+        print(f"Scanning Montana regulations hub: {base_url}")
         try:
             resp = self.session.get(base_url, timeout=10)
             resp.raise_for_status()
