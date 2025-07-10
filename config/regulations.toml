@@ -29,7 +29,8 @@ valid = [
   "goose",
   "migratory-bird",
   "upland-game-bird",
-  "lion"
+  "lion",
+  "small-game"
 ]
 
 [sources_by_state]

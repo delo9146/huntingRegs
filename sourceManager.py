@@ -37,6 +37,10 @@ class SourceManager:
         "mig-bird":           "migratory-bird",
         "upgbrd":             "upland-game-bird",
         "wolf-and-furbearer": "wolf-furbearer",
+        "big-game":           "deer-elk-sheep-goat-black-bear-mountain-lion-pronghorn-moose",
+        "ch03":               "furbearer-small-game",
+        "ch05":               "small-game-migratory-bird",
+        "ch10":               "nongame"
     }
 
     def _normalize_filename(self, orig_fname: str) -> str:
