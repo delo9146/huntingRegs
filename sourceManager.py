@@ -7,11 +7,14 @@ from urllib.parse import urljoin
 import logging
 from configManager import ConfigManager
 from fileManager import FileManager
+from ingest import extract_species_from_filename
+from assistantManager import AssistantManager
 
 class SourceManager:
-    def __init__(self, cfg: ConfigManager):
+    def __init__(self, cfg: ConfigManager, assistant_manager=None):
         self.cfg     = cfg
         self.fm      = FileManager(cfg.input_dir, cfg.output_dir)
+        self.am      = assistant_manager
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": (
@@ -23,13 +26,15 @@ class SourceManager:
         })
 
     def on_event(self, name: str, **ctx):
-            """
-            Hook for external listeners. Override in subclasses to handle:
-            - download_start
-            - download_success
-            - download_error
-            """
-            pass
+        if name == "download_success" and self.am:
+            path  = ctx["path"]
+            state = ctx.get("state")
+
+            species = extract_species_from_filename(
+                os.path.basename(path),
+                self.cfg.valid_species
+            )
+            self.am.ingest_file(path, state=state, species=species)
 
     _NAME_MAP = {
         "dea":                "deer-elk-antelope",

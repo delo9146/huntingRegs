@@ -10,7 +10,7 @@ api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=api_key)
 
 # Set your vector store ID
-VECTOR_STORE_ID = "vs_68508085bb40819191904f15902accfd" 
+VECTOR_STORE_ID = "vs_687047f0b154819184c77779388a2129" 
 
 # List files in the vector store
 files = client.vector_stores.files.list(vector_store_id=VECTOR_STORE_ID).data

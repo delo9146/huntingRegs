@@ -8,8 +8,9 @@ output_dir = "data/output"
 model_name = "gpt-4o"
 api_key_env = "OPENAI_API_KEY"
 
-[assistant]
+[vector_store]
 vector_store_name = "regs-store"
+vector_store_web = "regs-store-web"
 
 [species]
 valid = [
