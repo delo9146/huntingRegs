@@ -86,21 +86,6 @@ Logs show HTTP calls, retry behavior, and overall success for each file.
 
 ---
 
-## 🗂️ Batch Ingest (Optional)
-
-If you already have local PDFs and want to index them in bulk:
-
-```bash
-python ingest.py
-```
-
-**What happens:**
-
-- Walks `data/input/` for all state subfolders.
-- Extracts species from filenames via `extract_species_from_filename`.
-- Uploads and indexes each PDF exactly as the web pipeline.
-
----
 
 ## 🧹 Cleanup & Simplification
 
