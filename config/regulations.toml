@@ -9,7 +9,6 @@ model_name = "gpt-4o"
 api_key_env = "OPENAI_API_KEY"
 
 [vector_store]
-vector_store_name = "regs-store"
 vector_store_web = "regs-store-web"
 
 [species]
