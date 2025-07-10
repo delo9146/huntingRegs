@@ -1,5 +1,3 @@
-# sourceManager.py
-
 import os
 import time
 import re

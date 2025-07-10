@@ -5,7 +5,7 @@ from sourceManager import SourceManager
 import logging
 
 def main():
-    logging.basicConfig(level=logging.INFO)  # or DEBUG for more detail
+    logging.basicConfig(level=logging.INFO)  
 
     cfg = ConfigManager()
     sm  = SourceManager(cfg)
