@@ -1,10 +1,9 @@
-# assistantManager.py
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from configManager import ConfigManager
 
-class AssistantManager:
+class IngestManager:
     def __init__(self, config: ConfigManager):
         load_dotenv()
         api_key = os.getenv(config.api_key_env)

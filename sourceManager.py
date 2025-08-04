@@ -6,14 +6,14 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import logging
 from configManager import ConfigManager
-from assistantManager import AssistantManager
+from ingestManager import IngestManager
 
 class SourceManager:
-    def __init__(self, cfg: ConfigManager, assistant_manager=None):
+    def __init__(self, cfg: ConfigManager, ingest_manager=None):
         self.cfg     = cfg
         self.input_dir = cfg.input_dir
         self.output_dir = cfg.output_dir
-        self.am      = assistant_manager
+        self.im      = ingest_manager
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": (
@@ -38,7 +38,7 @@ class SourceManager:
         return matches
 
     def on_event(self, name: str, **ctx):
-        if name == "download_success" and self.am:
+        if name == "download_success" and self.im:
             path  = ctx["path"]
             state = ctx.get("state")
 
@@ -46,7 +46,7 @@ class SourceManager:
                 os.path.basename(path),
                 self.cfg.valid_species
             )
-            self.am.ingest_file(path, state=state, species=species)
+            self.im.ingest_file(path, state=state, species=species)
 
     _NAME_MAP = {
         "dea":                "deer-elk-antelope",

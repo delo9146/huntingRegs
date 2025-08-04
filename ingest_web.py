@@ -1,4 +1,4 @@
-from assistantManager import AssistantManager
+from ingestManager import IngestManager
 from configManager import ConfigManager
 from sourceManager import SourceManager
 import logging
@@ -7,10 +7,10 @@ def main():
     logging.basicConfig(level=logging.INFO)  
 
     cfg = ConfigManager()
-    am  = AssistantManager(cfg)
-    vs  = am.get_or_create_vector_store(name=cfg._config["vector_store"]["vector_store_web"])
+    im  = IngestManager(cfg)
+    vs  = im.get_or_create_vector_store(name=cfg._config["vector_store"]["vector_store_web"])
     print(f"Web regs will land in: {vs.id}")
-    sm  = SourceManager(cfg, assistant_manager=am)
+    sm  = SourceManager(cfg, ingest_manager=im)
 
     for state in cfg.sources_by_state.keys():
         logging.info("Starting ingestion for %s", state)
