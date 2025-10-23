@@ -26,7 +26,7 @@ class ConfigManager:
 
     @property
     def vector_store_name(self) -> str:
-        return self._config["assistant"]["vector_store_name"]
+        return self._config["vector_store"]["vector_store_web"]
 
     @property
     def valid_species(self):

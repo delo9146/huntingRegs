@@ -3,7 +3,7 @@ from dotenv import load_dotenv, find_dotenv
 import json
 from openai import OpenAI
 from configManager import ConfigManager
-from assistantManager import AssistantManager
+from ingestManager import IngestManager
 
 load_dotenv(find_dotenv())
 
@@ -13,8 +13,8 @@ def run_query_return(state: str, species: str, prompt: str = None, inject_chunks
     If inject_chunks=True, builds the prompt using section templates and top retrieved chunks.
     """
     cfg = ConfigManager()
-    am = AssistantManager(cfg)
-    vs = am.get_or_create_vector_store(cfg.vector_store_name)
+    im = IngestManager(cfg)
+    vs = im.get_or_create_vector_store(cfg.vector_store_name)
     client = OpenAI(api_key=os.getenv(cfg.api_key_env))
 
     # Step 1: Load and assemble prompt
@@ -43,7 +43,7 @@ def run_query_return(state: str, species: str, prompt: str = None, inject_chunks
         "filters": {
             "type": "and",
             "filters": [
-                {"type": "eq", "key": "state", "value": state},
+                {"type": "eq", "key": "state", "value": state.lower()},
                 {"type": "eq", "key": species, "value": True}
             ]
         }
@@ -69,8 +69,8 @@ def retrieve_section_chunks(state: str, species: str) -> dict:
     Returns a dict: { section_name: top_chunk_text }
     """
     cfg = ConfigManager()
-    am = AssistantManager(cfg)
-    vs = am.get_or_create_vector_store(cfg.vector_store_name)
+    im = IngestManager(cfg)
+    vs = im.get_or_create_vector_store(cfg.vector_store_name)
 
     client = OpenAI(api_key=os.getenv(cfg.api_key_env))
     queries = cfg.sectional_queries_for(state)
