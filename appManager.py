@@ -226,4 +226,17 @@ def show_hunting_areas_ui():
         st.subheader("Model Reasoning")
         st.code(reasoning)
 
+def show_dopecalc_ui():
+    import streamlit as st
+
+    st.button(
+        "⬅️ Back to Home",
+        on_click=lambda: st.session_state.pop("page", None)
+    )
+
+    st.title("🎯 Ballistics / DOPE Calculator")
+    st.write("Enter your rifle, ammo, and environmental details to generate a field-ready dope sheet.")
+    st.info("This is a placeholder page for now. We’ll wire up inputs, calculations, and outputs next.")
+
+
 
