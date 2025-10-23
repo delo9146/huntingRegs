@@ -109,3 +109,18 @@ def extract_legality_from_text(text):
         return False
     return None
 
+def run_prompt_simple(prompt: str) -> dict:
+    """
+    Minimal Responses API call with NO tools / NO vector store.
+    Use for non-RAG tasks like the DOPE calculator.
+    """
+    cfg = ConfigManager()
+    client = OpenAI(api_key=os.getenv(cfg.api_key_env))
+
+    response = client.responses.create(
+        model=cfg.model_name,
+        input=prompt
+    )
+    return {"text": response.output_text}
+
+

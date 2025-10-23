@@ -74,7 +74,27 @@ class ConfigManager:
             else:
                 raise ValueError(f"Invalid URL entry for state {state!r}: {urls!r}")
         return normalized
+    
+    def load_calibers(self):
+        calibers_path = os.path.join("config", "dope.toml")
+        if not os.path.exists(calibers_path):
+            raise FileNotFoundError(f"Calibers file not found: {calibers_path}")
 
+        calibers_cfg = toml.load(calibers_path)
+        calibers = calibers_cfg.get("calibers", {}).get("list", [])
+        return calibers
+
+    def load_scopes(self):
+        scopes_path = os.path.join("config", "scopes.toml")
+        if not os.path.exists(scopes_path):
+            raise FileNotFoundError(f"Scopes file not found: {scopes_path}")
+        scopes_cfg = toml.load(scopes_path)
+        scopes = {}
+        for brand, data in scopes_cfg.items():
+            if brand in ["meta"]:
+                continue
+            scopes[brand.capitalize()] = data.get("list", [])
+        return scopes
 
 
 

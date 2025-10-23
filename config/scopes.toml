@@ -1,0 +1,78 @@
+# scopes.toml
+# Top rifle scopes from the five major U.S. manufacturers.
+# Organized by brand for use in selectbox/dropdown menus.
+
+[meta]
+version = "1.0"
+generated = "2025-10-23"
+source = "curated list for Hunting POC"
+
+[vortex]
+list = [
+  "Razor HD Gen III 6-36x56",
+  "Razor HD Gen II 4.5-27x56",
+  "Viper PST Gen II 5-25x50",
+  "Viper HS-T 6-24x50",
+  "Viper HS LR 4-16x50",
+  "Strike Eagle 5-25x56",
+  "Venom 5-25x56 FFP",
+  "Diamondback Tactical 6-24x50",
+  "Crossfire II 4-12x44",
+  "Copperhead 4-12x44"
+]
+
+[leupold]
+list = [
+  "Mark 5HD 5-25x56",
+  "Mark 5HD 7-35x56",
+  "VX-6HD 3-18x44",
+  "VX-6HD 4-24x52",
+  "VX-5HD 3-15x44",
+  "VX-5HD 4-20x52",
+  "VX-3HD 4.5-14x40",
+  "VX-3HD 6.5-20x50",
+  "VX-Freedom 3-9x40",
+  "VX-Freedom 4-12x40"
+]
+
+[nightforce]
+list = [
+  "ATACR 7-35x56 F1",
+  "ATACR 5-25x56 F1",
+  "ATACR 4-16x42 F1",
+  "NX8 4-32x50 F1",
+  "NX8 2.5-20x50 F1",
+  "NXS 5.5-22x56",
+  "NXS 8-32x56",
+  "SHV 4-14x50 F1",
+  "SHV 5-20x56",
+  "Benchrest 12-42x56"
+]
+
+[burris]
+list = [
+  "XTR III 5.5-30x56",
+  "XTR III 3.3-18x50",
+  "XTR Pro 5.5-30x56",
+  "Veracity PH 4-20x50",
+  "Veracity 3-15x50",
+  "Signature HD 5-25x50",
+  "Fullfield IV 4-16x50",
+  "Fullfield E1 4.5-14x42",
+  "Droptine 4.5-14x42",
+  "Scout 2-7x32"
+]
+
+[bushnell]
+list = [
+  "Forge 4.5-27x50",
+  "Elite Tactical DMR3 3.5-21x50",
+  "Elite Tactical XRS3 6-36x56",
+  "Match Pro ED 5-30x56",
+  "Match Pro 6-24x50",
+  "Engage 3-12x42",
+  "Engage 4-16x44",
+  "Prime 3-12x40",
+  "Banner 2 3-9x40",
+  "Trophy XLT 4-12x40"
+]
