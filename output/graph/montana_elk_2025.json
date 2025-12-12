@@ -1,0 +1,698 @@
+{
+  "state": "Montana",
+  "year": 2025,
+  "species": "elk",
+  "units": [
+    {
+      "unit_code": "100",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "101",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "103",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "104",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "110",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "120",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "121",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "122",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "123",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "124",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "130",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "140",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "141",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "150",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "170",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "200",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "201",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "202",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "204",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "210",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "211",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "212",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "213",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "214",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "215",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "216",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "217",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "240",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "250",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "260",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "261",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "262",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "270",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "280",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "281",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "282",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "284",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "285",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "290",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "291",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "292",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "293",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "298",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "301",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "302",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "303",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "304",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "309",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "310",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "311",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "312",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "313",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "314",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "315",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "316",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "317",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "318",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "319",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "320",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "321",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "322",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "323",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "324",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "329",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "331",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "335",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "339",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "340",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "343",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "350",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "360",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "361",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "370",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "380",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "388",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "390",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "391",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "392",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "393",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "400",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "401",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "403",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "404",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "405",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "406",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "410",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "411",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "412",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "413",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "415",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "416",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "417",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "418",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "419",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "420",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "421",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "422",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "424",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "425",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "426",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "441",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "442",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "444",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "445",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "446",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "447",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "448",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "450",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "451",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "452",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "455",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "471",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "502",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "515",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "525",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "535",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "540",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "555",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "565",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "575",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "580",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "590",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "600",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "620",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "621",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "622",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "630",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "640",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "650",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "652",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "670",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "690",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "700",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "701",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "702",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "703",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "704",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "705",
+      "seasons": [],
+      "unit_restrictions": []
+    }
+  ],
+  "statewide_restrictions": []
+}

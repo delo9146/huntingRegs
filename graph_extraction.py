@@ -1,6 +1,7 @@
 import os
 import json
 from datetime import datetime
+from typing import Any, Dict, List, Tuple
 
 from openai import OpenAI
 from configManager import ConfigManager
@@ -10,7 +11,7 @@ from ingestManager import IngestManager
 # 1. Setup helpers: client + vector store + file_search tool
 # --------------------------------------------------------------------
 
-def _get_client_and_vector_store():
+def _get_client_and_vector_store() -> Tuple[ConfigManager, OpenAI, Any]:
     """
     Initialize OpenAI client and get/create the regulations vector store,
     using the same pattern as query_helper.run_query_return.
@@ -22,7 +23,7 @@ def _get_client_and_vector_store():
     return cfg, client, vs
 
 
-def _build_file_search_tool(state: str, species: str, vs) -> dict:
+def _build_file_search_tool(state: str, species: str, vs: Any) -> Dict[str, Any]:
     """
     Build the file_search tool definition filtered by state + species.
     Mirrors what you do in run_query_return/run_qa_query.
@@ -43,107 +44,159 @@ def _build_file_search_tool(state: str, species: str, vs) -> dict:
 # 2. Prompt construction
 # --------------------------------------------------------------------
 
-def build_extraction_prompt(state: str, species: str, year: int) -> str:
+def _format_unit_list(unit_codes: List[str], max_line_len: int = 110) -> str:
     """
-    Build the instructions the LLM will follow to output structured JSON
-    for the given state/species/year. This is where we embed our JSON schema.
+    Format unit codes into wrapped lines so the prompt stays readable.
     """
+    units = [str(u).strip() for u in unit_codes if str(u).strip()]
+    line = ""
+    lines = []
+    for u in units:
+        token = (u + ", ")
+        if len(line) + len(token) > max_line_len and line:
+            lines.append(line.rstrip().rstrip(","))
+            line = token
+        else:
+            line += token
+    if line.strip():
+        lines.append(line.rstrip().rstrip(","))
+    return "\n".join(lines)
 
-    # NOTE: This is where you paste / refine the JSON schema description
-    # we designed earlier. Keep it VERY explicit and emphasize:
-    # - JSON ONLY
-    # - Dates in YYYY-MM-DD
-    # - Use only units, seasons, tags that you can confirm from the docs.
 
-    schema_description = """
-    You are extracting hunting regulations into STRICT JSON.
+def build_extraction_prompt(state: str, species: str, year: int, unit_codes: List[str]) -> str:
+    """
+    Build instructions the LLM will follow to output structured JSON.
 
-    Your task:
-    - Focus on state-level hunting regulations for {state}, species {species}, for the {year} season.
-    - Use ONLY the attached regulation documents. If something is unknown, omit it.
+    Key requirement for this iteration:
+    - The output MUST include a "units" entry for EVERY unit_code provided.
+    - If there are no special seasons/restrictions found for a unit, include that unit
+      with empty arrays (do NOT omit the unit).
+    """
+    unit_codes_norm = [str(u).strip() for u in unit_codes if str(u).strip()]
+    unit_list_block = _format_unit_list(unit_codes_norm)
 
-    Output format (single JSON object):
-
+    # Pure text (NOT an f-string). Keep it JSON-like but avoid comment syntax like //,
+    # because models sometimes copy that and return invalid JSON.
+    schema_example = r"""
+{
+  "state": "<full state name>",
+  "year": <int>,
+  "species": "<species name, e.g., elk>",
+  "units": [
     {
-      "state": "<full state name>",
-      "year": <int>,
-      "species": "<species name, e.g., elk>",
-      "units": [
+      "unit_code": "310",
+      "unit_name": "Upper Gallatin",
+      "seasons": [],
+      "unit_restrictions": []
+    },
+    {
+      "unit_code": "320",
+      "seasons": [
         {
-          "unit_code": "320",
-          "unit_name": "Bridger Mountains",   // if present, otherwise null or omit
-          "seasons": [
+          "weapon": "archery",
+          "season_type": "archery",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
             {
-              "weapon": "archery",            // normalized category
-              "season_type": "archery",       // e.g., general, archery, late, shoulder, youth
-              "start_date": "2025-09-06",     // YYYY-MM-DD
-              "end_date": "2025-10-19",
-              "licenses_required": [
-                {
-                  "code": "General Elk",
-                  "residency": "either"       // resident, nonresident, or either
-                }
-              ],
-              "restrictions": [
-                {
-                  "type": "antler",           // antler, blaze_orange, vehicle_access, land_access, youth_only, etc.
-                  "summary": "Brow tine bull only.",
-                  "details": "Only elk with at least one brow tine of 4 inches or longer..."
-                }
-              ],
-              "source": {
-                "document_name": "2025 Montana Elk Regulations",
-                "page_number": 12
-              }
+              "code": "General Elk",
+              "residency": "either"
             }
           ],
-          "unit_restrictions": [
+          "restrictions": [
             {
-              "type": "access",
-              "summary": "No motorized vehicles beyond posted signs.",
-              "details": "Motorized travel is restricted to open designated routes...",
-              "source": {
-                "document_name": "2025 Montana Elk Regulations",
-                "page_number": 8
-              }
+              "type": "antler",
+              "summary": "Brow-tined bull only.",
+              "details": "Only valid in the specified sub-area..."
             }
-          ]
+          ],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf",
+            "page_number": 72
+          }
         }
       ],
-      "statewide_restrictions": [
+      "unit_restrictions": [
         {
-          "type": "blaze_orange",
-          "summary": "Blaze orange required during general firearms seasons.",
-          "details": "Hunters must wear at least 400 square inches of hunter orange...",
+          "type": "land_access",
+          "summary": "Area closed except by special permit.",
+          "details": "Short details...",
           "source": {
-            "document_name": "2025 Montana General Regulations",
-            "page_number": 3
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf",
+            "page_number": 72
           }
         }
       ]
     }
+  ],
+  "statewide_restrictions": [
+    {
+      "type": "blaze_orange",
+      "summary": "Blaze orange required during general firearms seasons.",
+      "details": "Hunters must wear at least 400 square inches of hunter orange.",
+      "source": {
+        "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf",
+        "page_number": 3
+      }
+    }
+  ]
+}
+""".strip()
 
-    Rules:
-    - JSON ONLY. No markdown, no comments, no code fences.
-    - Dates MUST be "YYYY-MM-DD".
-    - Only include units, seasons, licenses, and restrictions that you can confidently identify.
-    - If a field is unknown, omit it rather than guessing.
-    """.format(state=state, species=species, year=year)
+    prompt = f"""
+You are extracting hunting regulations into STRICT JSON.
 
-    return schema_description.strip()
+Task:
+- Extract hunting regulation facts for state={state}, species={species}, year={year}.
+- Use ONLY the attached regulation documents (via file_search). Do not guess.
+- If you cannot confirm a fact, omit that fact (but still include required unit shells).
+
+CRITICAL REQUIREMENT (Units):
+- You MUST include one "units" entry for EVERY unit_code in the authoritative list below.
+- Do NOT omit any unit_code from the list.
+- If you cannot find any special seasons or restrictions for a unit, include that unit with:
+  - "seasons": []
+  - "unit_restrictions": []
+- Each unit_code must appear EXACTLY ONCE in the output "units" array.
+
+Authoritative unit codes to include (count={len(unit_codes_norm)}):
+{unit_list_block}
+
+Output:
+- Return EXACTLY ONE JSON object matching the schema below.
+- JSON ONLY: no markdown, no code fences, no comments, no extra text before/after JSON.
+
+Schema example (structure + field names):
+{schema_example}
+
+Normalization rules:
+- Dates MUST be "YYYY-MM-DD".
+- weapon MUST be one of: archery, rifle, muzzleloader, shotgun, handgun, any_legal_weapon, unknown
+- residency MUST be one of: resident, nonresident, either, unknown
+- restriction.type SHOULD be one of: antler, blaze_orange, vehicle_access, land_access, weapon_specific, youth_only, permit_required, other
+
+Quality rules:
+- Keep "details" short (a few sentences max).
+- Include "source.page_number" ONLY if you are confident; otherwise omit page_number.
+""".strip()
+
+    return prompt
 
 # --------------------------------------------------------------------
 # 3. Call the LLM with file_search
 # --------------------------------------------------------------------
 
-def call_extraction_llm(state: str, species: str, year: int) -> str:
+def call_extraction_llm(state: str, species: str, year: int) -> Tuple[str, List[str]]:
     """
     Use the Responses API + file_search to extract structured JSON.
-    Returns the raw text output from the model (should be JSON).
+    Returns (raw_text, unit_codes_used).
     """
     cfg, client, vs = _get_client_and_vector_store()
     file_search_tool = _build_file_search_tool(state, species, vs)
-    prompt = build_extraction_prompt(state, species, year)
+
+    # Pull authoritative unit list from regulations.toml
+    unit_codes = cfg.units_for(state, species)  # e.g., ["310", "312", ...]
+    prompt = build_extraction_prompt(state, species, year, unit_codes)
 
     response = client.responses.create(
         model=cfg.model_name,
@@ -151,44 +204,119 @@ def call_extraction_llm(state: str, species: str, year: int) -> str:
         tools=[file_search_tool],
         temperature=0,
     )
-    # All your other code uses response.output_text; keep it consistent.
-    return response.output_text
+
+    return response.output_text, [str(u).strip() for u in unit_codes if str(u).strip()]
 
 # --------------------------------------------------------------------
 # 4. Parse + basic validation
 # --------------------------------------------------------------------
 
-def parse_and_validate_json(raw_text: str, state: str, species: str, year: int) -> dict:
+def _normalize_unit_code(x: Any) -> str:
+    return str(x).strip()
+
+
+def _ensure_all_units_present(data: Dict[str, Any], unit_codes: List[str]) -> Dict[str, Any]:
     """
-    Parse the model output as JSON and perform some basic sanity checks.
-    Raise ValueError if things look wrong so you can debug / retry.
+    Ensure every unit_code exists exactly once in data["units"].
+
+    Strategy:
+    - If the model omitted units, we add "shell" units with empty arrays.
+    - If the model duplicated a unit_code, we keep the first and drop later duplicates.
+    """
+    expected = [_normalize_unit_code(u) for u in unit_codes if _normalize_unit_code(u)]
+    expected_set = set(expected)
+
+    units = data.get("units", [])
+    if not isinstance(units, list):
+        units = []
+
+    seen = set()
+    normalized_units = []
+    for u in units:
+        if not isinstance(u, dict):
+            continue
+        code = _normalize_unit_code(u.get("unit_code", ""))
+        if not code or code not in expected_set:
+            # ignore unknown unit codes; you can change this to keep them if desired
+            continue
+        if code in seen:
+            continue
+        seen.add(code)
+        # ensure required arrays exist
+        u.setdefault("seasons", [])
+        u.setdefault("unit_restrictions", [])
+        normalized_units.append(u)
+
+    # Add missing shells
+    missing = [c for c in expected if c not in seen]
+    for code in missing:
+        normalized_units.append({
+            "unit_code": code,
+            "seasons": [],
+            "unit_restrictions": []
+        })
+
+    # Sort by unit_code for stable output (numeric sort when possible)
+    def _sort_key(u: Dict[str, Any]):
+        code = _normalize_unit_code(u.get("unit_code", ""))
+        try:
+            return (0, int(code))
+        except Exception:
+            return (1, code)
+
+    normalized_units.sort(key=_sort_key)
+    data["units"] = normalized_units
+    return data
+
+
+def parse_and_validate_json(raw_text: str, state: str, species: str, year: int, unit_codes: List[str]) -> Dict[str, Any]:
+    """
+    Parse model output as JSON and perform basic sanity checks.
+
+    Also enforces that ALL expected units are present (adding empty shells if needed).
     """
     try:
         data = json.loads(raw_text)
     except json.JSONDecodeError as e:
-        raise ValueError(f"Model output was not valid JSON: {e}\n\nRaw:\n{raw_text[:500]}")
+        raise ValueError(
+            f"Model output was not valid JSON: {e}\n\n"
+            f"Raw (first 800 chars):\n{raw_text[:800]}"
+        )
 
-    # Basic checks
-    if str(data.get("state", "")).lower().replace(" ", "") == state.lower().replace(" ", ""):
-        pass  # okay-ish
-    # You can decide how strict you want to be here.
+    # Sanity checks (keep relatively lightweight)
+    extracted_species = (data.get("species") or "").strip().lower()
+    if extracted_species and extracted_species != species.strip().lower():
+        raise ValueError(f"Extracted species '{data.get('species')}' != expected '{species}'")
 
-    if data.get("species") and data["species"].lower() != species.lower():
-        # Not fatal, but warn or raise depending on how strict you want
-        raise ValueError(f"Extracted species {data['species']} != expected {species}")
+    if "year" in data:
+        try:
+            if int(data["year"]) != int(year):
+                raise ValueError(f"Extracted year '{data['year']}' != expected '{year}'")
+        except Exception as e:
+            raise ValueError(f"Invalid 'year' field in extracted JSON: {e}")
 
-    if "year" in data and int(data["year"]) != int(year):
-        raise ValueError(f"Extracted year {data['year']} != expected {year}")
-
-    # Optional: validate dates in seasons
-    for unit in data.get("units", []):
-        for season in unit.get("seasons", []):
+    # Validate dates if present
+    for unit in data.get("units", []) or []:
+        if not isinstance(unit, dict):
+            continue
+        for season in unit.get("seasons", []) or []:
+            if not isinstance(season, dict):
+                continue
             for key in ("start_date", "end_date"):
-                if key in season:
+                if key in season and season[key]:
                     try:
                         datetime.strptime(season[key], "%Y-%m-%d")
                     except Exception as e:
-                        raise ValueError(f"Invalid date {season[key]} in season: {e}")
+                        raise ValueError(f"Invalid date '{season[key]}' in season: {e}")
+
+    # Enforce unit coverage (fills missing unit shells + dedupes)
+    data = _ensure_all_units_present(data, unit_codes)
+
+    # Final assert: guarantee coverage
+    out_codes = {_normalize_unit_code(u.get("unit_code", "")) for u in (data.get("units") or []) if isinstance(u, dict)}
+    missing = [c for c in unit_codes if _normalize_unit_code(c) and _normalize_unit_code(c) not in out_codes]
+    if missing:
+        raise ValueError(f"After normalization, still missing unit_code(s): {missing[:20]}{'...' if len(missing) > 20 else ''}")
 
     return data
 
@@ -204,8 +332,8 @@ def extract_reg_graph(state: str, species: str, year: int, output_dir: str = "ou
     - Writes JSON to output_dir as <state>_<species>_<year>.json
     - Returns the output file path
     """
-    raw = call_extraction_llm(state, species, year)
-    data = parse_and_validate_json(raw, state, species, year)
+    raw, unit_codes = call_extraction_llm(state, species, year)
+    data = parse_and_validate_json(raw, state, species, year, unit_codes)
 
     os.makedirs(output_dir, exist_ok=True)
     filename = f"{state.lower()}_{species.lower()}_{year}.json".replace(" ", "_")
@@ -221,8 +349,6 @@ def extract_reg_graph(state: str, species: str, year: int, output_dir: str = "ou
 # --------------------------------------------------------------------
 
 if __name__ == "__main__":
-    # Simple manual test; tweak these values as needed.
-    # For Montana elk 2025, you'd run: python graph_extraction.py
     state = "Montana"
     species = "elk"
     year = 2025
