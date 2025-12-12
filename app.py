@@ -1,6 +1,5 @@
 import streamlit as st
 from appManager import show_regulations_ui, show_unit_demo_ui, show_hunting_areas_ui
-
 st.set_page_config(page_title="Hunting Regs AI Demo", layout="wide")
 
 if "page" not in st.session_state:
@@ -10,6 +9,7 @@ if "page" not in st.session_state:
     st.button("🎯 Hunting Regulations", on_click=lambda: st.session_state.__setitem__("page", "regs"))
     st.button("📍 Species / Unit Demo", on_click=lambda: st.session_state.__setitem__("page", "demo"))
     st.button("🗺️ Hunting Areas (Completions API)", on_click=lambda: st.session_state.__setitem__("page", "areas"))
+
 
     if "page" not in st.session_state:
         st.stop()

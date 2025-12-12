@@ -2,7 +2,7 @@ import datetime
 import os
 import streamlit as st
 from configManager import ConfigManager
-from query_helper import run_query_return, extract_legality_from_text
+from query_helper import run_query_return, extract_legality_from_text, run_qa_query
 
 from huntingAreas.ConfigManager import ConfigManager as HuntingConfigManager
 from huntingAreas.imageAnalysis import ImageAnalysisManager
@@ -71,7 +71,7 @@ def show_regulations_ui():
     )
     if st.button("Ask"):
         with st.spinner("Getting answer…"):
-            ans = run_query_return(state, species, user_q)
+            ans = run_qa_query(state, species, user_q)
             st.session_state.chat_history.append((user_q, ans))
 
     if st.button("Clear Conversation"):
@@ -86,6 +86,7 @@ def show_regulations_ui():
 
 
 def show_unit_demo_ui():
+    from query_helper import run_query_return, extract_legality_from_text, run_legality_query, run_harvest_query
     st.button(
         "⬅️ Back to Home",
         on_click=lambda: st.session_state.pop("page", None)
@@ -94,7 +95,8 @@ def show_unit_demo_ui():
     st.title("📍 Species / Unit Demo")
     st.write("Select a state, species, and unit to see all regulations for that combination, and whether the species can be hunted today.")
 
-    state = st.selectbox("Select state", [":--Select--","Montana"])
+    # NOTE: your placeholder had a small mismatch; keep the sentinel identical
+    state = st.selectbox("Select state", ["-- Select --","Montana"])
 
     species = None
     if state != "-- Select --":
@@ -118,32 +120,75 @@ def show_unit_demo_ui():
         and unit != "-- Select --"
     ):
         today_str = datetime.date.today().strftime("%B %d, %Y")
-        legality_prompt = f"Can a hunter legally hunt {species} in {state}, unit {unit}, on {today_str}? Respond YES or NO, then explain."
+        legality_prompt = (
+            f"Can a hunter legally hunt {species} in {state}, unit {unit}, on {today_str}? "
+            "Respond YES or NO, then explain. It doesn't matter if only one weapon type is valid, "
+            "if one is valid then hunting is open for that weapon and your response should be yes. "
+            "If no hunting is available for any weapons, the answer should be no. If a unit shows that there "
+            "are restricted areas closed to hunting, that does not mean the unit is. If the date sent falls within "
+            "an open season, the answer should be yes. Regardless of the answer, provide season dates for the given unit. "
+            "Always give the name of the unit if provided in documentation."
+        )
 
         with st.spinner(f"Checking if {species} is huntable today in unit {unit}…"):
-            res = run_query_return(state, species, legality_prompt)
+            res = run_legality_query(state, species, legality_prompt)
             legality = extract_legality_from_text(res["text"])
-            print("Legality output:", res["text"])
             if legality is True:
                 st.success(f"✅ Yes – {species.capitalize()} **can** currently be hunted in unit {unit}.")
             elif legality is False:
                 st.error(f"❌ No – {species.capitalize()} **cannot** be hunted today in unit {unit}.")
             else:
                 st.warning("⚠️ Couldn't determine legality with confidence. Please review the regulations manually.")
-
             st.caption(res["text"])
 
-    if st.button(f"Show regs for {species.capitalize()} in HD {unit}"):
-        today_str = datetime.date.today().strftime("%B %d, %Y")
-        prompt = cfg.unit_prompt.format(
-            state=state,
-            species=species.capitalize(),
-            unit=unit,
-            today_str=today_str
-        )
-        with st.spinner(f"Querying regs for {species.capitalize()} in HD {unit}…"):
-            res = run_query_return(state, species, prompt)
-        st.markdown(res["text"], unsafe_allow_html=True)
+        # --- SECOND CALL: Harvest-only with metadata filter harvest_report: True
+        year = 2024
+        with st.spinner(f"Fetching {year} harvest stats for HD {unit}…"):
+            harvest_res = run_harvest_query(state, species, unit, year)
+
+        st.markdown("### 2024 Harvest (from Harvest Estimates)")
+
+        import json
+        try:
+            # harvest_res is a dict; its 'text' field is the model output string
+            data = json.loads(harvest_res["text"])
+
+            if not data or data.get("found") is False:
+                st.info(data.get("reason", "No matching row found in the harvest report."))
+            else:
+                # Expecting the strict JSON schema:
+                # {
+                #   "found": true,
+                #   "unit": "...",
+                #   "year": 2024,
+                #   "resident": {"hunters": int|null, "harvest": int|null},
+                #   "nonresident": {"hunters": int|null, "harvest": int|null},
+                #   "sum": {"hunters": int|null, "harvest": int|null}
+                # }
+                st.write(f"- **Hunters (R):** {data['resident']['hunters']}")
+                st.write(f"- **Total Harvest (R):** {data['resident']['harvest']}")
+                st.write(f"- **Hunters (N):** {data['nonresident']['hunters']}")
+                st.write(f"- **Total Harvest (N):** {data['nonresident']['harvest']}")
+                st.write(f"- **Hunters (SUM):** {data['sum']['hunters']}")
+                st.write(f"- **Total Harvest (SUM):** {data['sum']['harvest']}")
+        except Exception:
+            # If the LLM didn’t return valid JSON, show the raw text for debugging
+            st.code(harvest_res["text"])
+
+    # Optional: show regs button (fixed to use the proper prompt variable)
+    if species and unit and species != "-- Select --" and unit != "-- Select --":
+        if st.button(f"Show regs for {species.capitalize()} in HD {unit}"):
+            today_str = datetime.date.today().strftime("%B %d, %Y")
+            prompt = cfg.unit_prompt.format(
+                state=state,
+                species=species.capitalize(),
+                unit=unit,
+                today_str=today_str
+            )
+            with st.spinner(f"Querying regs for {species.capitalize()} in HD {unit}…"):
+                res = run_legality_query(state, species, prompt)
+            st.markdown(res["text"], unsafe_allow_html=True)
+
 
 
 
@@ -225,5 +270,10 @@ def show_hunting_areas_ui():
 
         st.subheader("Model Reasoning")
         st.code(reasoning)
+
+
+
+
+
 
 
