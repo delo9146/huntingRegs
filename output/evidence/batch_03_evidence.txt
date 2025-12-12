@@ -1,0 +1,1 @@
+(No evidence retrieved from vector store for this batch.)
