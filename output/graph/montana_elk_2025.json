@@ -5,22 +5,90 @@
   "units": [
     {
       "unit_code": "100",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
       "unit_code": "101",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
       "unit_code": "103",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
       "unit_code": "104",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
@@ -35,7 +103,24 @@
     },
     {
       "unit_code": "121",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
@@ -160,7 +245,24 @@
     },
     {
       "unit_code": "262",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-10-25",
+          "end_date": "2025-11-30",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
@@ -170,7 +272,24 @@
     },
     {
       "unit_code": "280",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "archery",
+          "season_type": "archery",
+          "start_date": "2025-09-06",
+          "end_date": "2025-09-14",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
@@ -180,12 +299,52 @@
     },
     {
       "unit_code": "282",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-10-25",
+          "end_date": "2025-11-30",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
       "unit_code": "284",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "archery",
+          "season_type": "archery",
+          "start_date": "2025-09-06",
+          "end_date": "2025-11-30",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [
+            {
+              "type": "weapon_specific",
+              "summary": "ArchEquip only.",
+              "details": ""
+            }
+          ],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
@@ -195,7 +354,30 @@
     },
     {
       "unit_code": "290",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "archery",
+          "season_type": "archery",
+          "start_date": "2025-09-06",
+          "end_date": "2025-11-30",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [
+            {
+              "type": "weapon_specific",
+              "summary": "ArchEquip only.",
+              "details": ""
+            }
+          ],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
@@ -245,7 +427,30 @@
     },
     {
       "unit_code": "310",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-10-25",
+          "end_date": "2025-11-30",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [
+            {
+              "type": "land_access",
+              "summary": "Special permit required.",
+              "details": ""
+            }
+          ],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
@@ -310,22 +515,90 @@
     },
     {
       "unit_code": "323",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
       "unit_code": "324",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
       "unit_code": "329",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
       "unit_code": "331",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
@@ -340,7 +613,24 @@
     },
     {
       "unit_code": "340",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
@@ -355,7 +645,24 @@
     },
     {
       "unit_code": "360",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
@@ -455,17 +762,116 @@
     },
     {
       "unit_code": "416",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "archery",
+          "season_type": "archery",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        },
+        {
+          "weapon": "rifle",
+          "season_type": "general",
+          "start_date": "2025-10-25",
+          "end_date": "2025-11-30",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
       "unit_code": "417",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "archery",
+          "season_type": "archery",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        },
+        {
+          "weapon": "rifle",
+          "season_type": "general",
+          "start_date": "2025-10-25",
+          "end_date": "2025-11-30",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
       "unit_code": "418",
-      "seasons": [],
+      "seasons": [
+        {
+          "weapon": "archery",
+          "season_type": "archery",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        },
+        {
+          "weapon": "rifle",
+          "season_type": "general",
+          "start_date": "2025-10-25",
+          "end_date": "2025-11-30",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
@@ -615,22 +1021,94 @@
     },
     {
       "unit_code": "600",
-      "seasons": [],
+      "unit_name": "North Hill-Blaine",
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
       "unit_code": "620",
-      "seasons": [],
+      "unit_name": "South Phillips",
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
       "unit_code": "621",
-      "seasons": [],
+      "unit_name": "Upper Missouri Breaks-West",
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
       "unit_code": "622",
-      "seasons": [],
+      "unit_name": "Middle Missouri Breaks",
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
@@ -660,12 +1138,48 @@
     },
     {
       "unit_code": "690",
-      "seasons": [],
+      "unit_name": "Missouri Breaks-Prairie",
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
       "unit_code": "700",
-      "seasons": [],
+      "unit_name": "Missouri Breaks-Prairie",
+      "seasons": [
+        {
+          "weapon": "any_legal_weapon",
+          "season_type": "general",
+          "start_date": "2025-09-06",
+          "end_date": "2025-10-19",
+          "licenses_required": [
+            {
+              "code": "General Elk",
+              "residency": "either"
+            }
+          ],
+          "restrictions": [],
+          "source": {
+            "document_name": "2025-deer-elk-antelope-regulations-final-for-web.pdf"
+          }
+        }
+      ],
       "unit_restrictions": []
     },
     {
